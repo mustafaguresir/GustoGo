@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GustoGo – Kapında Sıcak Lezzetler & Akıllı Kurye Takip</title>
+    <meta name="description" content="Manhattan algoritmalı akıllı kurye atama, canlı animasyonlu kurye takibi, ürün özelleştirme ve cüzdan sistemli yemek sipariş platformu.">
+    
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome 6 Free (CDN) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Modular CSS Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- Top Announcement Ticker -->
+<div class="top-ticker">
+    <span class="ticker-badge" onclick="applyCouponCode('GUSTO30')">🔥 GUSTO30</span>
+    <span>İlk siparişine özel <strong>%30 İNDİRİM</strong> fırsatını kaçırma!</span>
+    <span style="opacity:0.6;">|</span>
+    <span>⚡ Manhattan Algoritmasıyla En Yakın Kurye 1 Saniyede Kapında!</span>
+</div>
+
+<!-- Header Navigation -->
+<header class="topnav">
+    <a class="brand" onclick="showRestaurants()">
+        <div class="brand-logo"><i class="fa-solid fa-utensils"></i></div>
+        <span>Gusto<em>Go</em></span>
+    </a>
+    
+    <div class="nav-address" onclick="openAddressModal()" id="btn-nav-address">
+        <i class="fa-solid fa-location-dot pin"></i>
+        <span id="nav-addr-label">Kadıköy Moda (18, 14)</span>
+        <i class="fa-solid fa-chevron-down" style="font-size:11px;color:var(--text-3);margin-left:auto;"></i>
+    </div>
+    
+    <!-- Delivery Mode Switcher (Adrese Teslim vs Gel-Al) -->
+    <div class="del-mode-toggle" id="del-mode-toggle">
+        <button class="del-mode-btn active" id="btn-del-courier" onclick="switchDeliveryMode('courier')" title="Kurye ile Adrese Teslim">
+            <i class="fa-solid fa-motorcycle"></i> Adrese Teslim
+        </button>
+        <button class="del-mode-btn" id="btn-del-takeaway" onclick="switchDeliveryMode('takeaway')" title="Restorandan Gel-Al: 0 ₺ Teslimat + %20 Ek İndirim">
+            <i class="fa-solid fa-person-walking"></i> Gel-Al <span class="badge-discount-tag">%20 İndirim</span>
+        </button>
+    </div>
+    
+    <div class="nav-search">
+        <input type="text" id="global-search" placeholder="Restoran veya lezzetli bir yemek arayın…" oninput="globalSearch()">
+        <i class="fa-solid fa-magnifying-glass"></i>
+    </div>
+    
+    <!-- Quick Action Pills -->
+    <div class="demo-pills">
+        <button class="demo-pill" id="btn-quick-proofs" onclick="openProofsModal()" style="background:linear-gradient(135deg, rgba(250,74,12,0.22), rgba(139,92,246,0.22));border-color:var(--primary);color:var(--text);font-weight:800;" title="Resmi Şartnamedeki 3 Zorunlu Kanıtı Göster">
+            <i class="fa-solid fa-graduation-cap" style="color:var(--primary);"></i> 🎓 3 Zorunlu Kanıt
+        </button>
+        <button class="demo-pill" id="btn-quick-wheel" onclick="openWheelModal()" title="Şanslı Gusto Çarkı - Çevir ve Kazan">
+            <i class="fa-solid fa-dharmachakra" style="color:var(--primary);"></i> Şans Çarkı
+        </button>
+        <button class="demo-pill" id="btn-quick-checkout" onclick="openCheckoutModal()" title="Gelişmiş Ödeme Modalı">
+            <i class="fa-solid fa-credit-card" style="color:var(--primary);"></i> Ödeme
+        </button>
+        <button class="demo-pill" id="btn-quick-chat" onclick="openChatModal()" title="Kurye Mesajlaşma">
+            <i class="fa-solid fa-comment-dots" style="color:var(--blue);"></i> Kurye Sohbet
+        </button>
+        <button class="demo-pill" id="btn-quick-receipt" onclick="openReceiptModal()" title="Sipariş Fişi / Fatura">
+            <i class="fa-solid fa-receipt" style="color:var(--purple);"></i> Fiş / Fatura
+        </button>
+        <button class="demo-pill" id="btn-quick-rating" onclick="openRatingModal()" title="Puanlama & Yorum">
+            <i class="fa-solid fa-star" style="color:var(--yellow);"></i> Puanlama
+        </button>
+    </div>
+    
+    <div class="nav-actions">
+        <!-- Sound Effect Toggle -->
+        <button class="action-icon-btn" onclick="toggleSound()" title="Ses Efektleri Açık/Kapalı">
+            <i class="fa-solid fa-volume-high" id="sound-ico"></i>
+        </button>
+
+        <!-- Theme Toggle -->
+        <button class="action-icon-btn" onclick="toggleTheme()" title="Açık / Koyu Tema">
+            <i class="fa-solid fa-sun" id="theme-ico"></i>
+        </button>
+        
+        <!-- User Profile Pill -->
+        <div class="user-pill" onclick="openAccountModal()">
+            <div class="user-avatar" id="nav-avatar">A</div>
+            <div class="user-meta">
+                <div class="user-name" id="nav-name">Ahmet Yılmaz</div>
+                <div class="user-role-badge" id="nav-role"><i class="fa-solid fa-coins"></i> 145 Puan</div>
+            </div>
+        </div>
+        
+        <!-- Role Switcher Button -->
+        <button class="role-switch-btn" onclick="openLogin()">
+            <i class="fa-solid fa-users"></i> Rol / Giriş
+        </button>
+    </div>
+</header>
+
+<!-- Floating Bottom Cart Bar -->
+<div class="floating-cart-bar" id="floating-cart-bar">
+    <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg, var(--primary), var(--primary-2));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:15px;" id="float-cart-count">1</div>
+        <div>
+            <div style="font-size:13.5px;font-weight:800;color:var(--text);" id="float-cart-text">Sepetinizde 1 lezzet var</div>
+            <div style="font-size:14px;color:var(--primary);font-weight:900;" id="float-cart-total">250.00 ₺</div>
+        </div>
+    </div>
+    <button class="btn btn-primary" onclick="openCheckoutModal()" style="border-radius:30px;padding:12px 24px;font-size:14px;">
+        <i class="fa-solid fa-credit-card"></i> Siparişi Tamamla & Öde
+    </button>
+</div>
+
+<main class="main-container">
+    <!-- ======================================================== -->
+    <!-- 1. MÜŞTERİ PANELİ (CUSTOMER PORTAL)                       -->
+    <!-- ======================================================== -->
+    <div id="view-customer">
+        <!-- Story Highlights -->
+        <div class="stories-bar">
+            <div class="story-item" onclick="filterCategory('Burger')">
+                <div class="story-ring"><img class="story-img" src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=150&q=80" alt="Burger"></div>
+                <span class="story-label">Burgerler</span>
+            </div>
+            <div class="story-item" onclick="filterCategory('Kebap')">
+                <div class="story-ring"><img class="story-img" src="https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?auto=format&fit=crop&w=150&q=80" alt="Kebap"></div>
+                <span class="story-label">Kebap & Dürüm</span>
+            </div>
+            <div class="story-item" onclick="filterCategory('Pizza')">
+                <div class="story-ring"><img class="story-img" src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=150&q=80" alt="Pizza"></div>
+                <span class="story-label">Pizzalar</span>
+            </div>
+            <div class="story-item" onclick="filterCategory('Sushi')">
+                <div class="story-ring"><img class="story-img" src="https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=150&q=80" alt="Sushi"></div>
+                <span class="story-label">Sushi Bar</span>
+            </div>
+            <div class="story-item" onclick="filterCategory('Tatlı')">
+                <div class="story-ring"><img class="story-img" src="https://images.unsplash.com/photo-1562376552-0d160a2f238d?auto=format&fit=crop&w=150&q=80" alt="Tatlı"></div>
+                <span class="story-label">Tatlı & Waffle</span>
+            </div>
+            <div class="story-item" onclick="filterCategory('Tavuk')">
+                <div class="story-ring"><img class="story-img" src="https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?auto=format&fit=crop&w=150&q=80" alt="Tavuk"></div>
+                <span class="story-label">Çıtır Tavuk</span>
+            </div>
+            <div class="story-item" onclick="filterCategory('Balık')">
+                <div class="story-ring"><img class="story-img" src="https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=150&q=80" alt="Balık"></div>
+                <span class="story-label">Deniz Ürünleri</span>
+            </div>
+        </div>
+        
+        <!-- Hero Banner -->
+        <div class="hero-banner">
+            <div class="hero-content">
+                <div class="hero-tag"><i class="fa-solid fa-bolt"></i> Akıllı Manhattan Algoritması</div>
+                <h1 class="hero-title">Canın ne çekiyorsa,<br><span>en yakın kuryeyle</span> kapında!</h1>
+                <p class="hero-desc">Bölgedeki en düşük skorlu kurye Manhattan algoritmasıyla anında restoran ve evinize rota çizer. Sıcak ve taptaze lezzet dakikalar içinde masanızda.</p>
+                <button class="hero-btn" onclick="scrollToRestaurants()">
+                    <span>Hemen Lezzetleri Keşfet</span> <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+            <div class="hero-img-wrap">
+                <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=480&q=80" alt="Gusto Lezzetler" style="width:340px;height:240px;border-radius:24px;object-fit:cover;box-shadow:var(--shadow);">
+                <div class="hero-floating-badge">
+                    <i class="fa-solid fa-motorcycle" style="color:var(--primary);font-size:20px;"></i>
+                    <div>
+                        <div style="font-size:11px;color:var(--text-3);">Ortalama Teslimat</div>
+                        <div style="color:var(--primary);font-weight:900;">~22 Dakika</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Flash Deals Section -->
+        <div id="flash-deals-section">
+            <div class="sec-head">
+                <div>
+                    <div class="sec-title"><i class="fa-solid fa-bolt" style="color:#E02020;"></i> Flaş İndirimler & Süper Fırsatlar</div>
+                    <div class="sec-sub">Sınırlı süre için kaçırılmayacak indirimler</div>
+                </div>
+                <div style="font-size:13.5px;font-weight:800;color:var(--text);display:flex;align-items:center;gap:6px;background:var(--surface);border:1.5px solid var(--border);padding:6px 14px;border-radius:20px;">
+                    <i class="fa-regular fa-clock" style="color:var(--primary);"></i> Kalan Süre: <span id="flash-timer" style="color:var(--primary);font-weight:900;">02:44:18</span>
+                </div>
+            </div>
+            <div class="flash-grid" id="flash-grid"></div>
+        </div>
+        
+        <!-- Popular Showcase -->
+        <div id="popular-showcase-section">
+            <div class="sec-head">
+                <div>
+                    <div class="sec-title"><i class="fa-solid fa-fire" style="color:var(--primary);"></i> En Çok Tercih Edilen Lezzetler</div>
+                    <div class="sec-sub">Kullanıcılarımızın damak tadını fetheden şef seçimleri</div>
+                </div>
+            </div>
+            <div class="pop-food-grid" id="pop-food-grid"></div>
+        </div>
+        
+        <!-- Restaurants & Smart Sort -->
+        <div id="rest-section">
+            <div class="sec-head">
+                <div>
+                    <div class="sec-title" id="rest-section-title"><i class="fa-solid fa-store" style="color:var(--primary);"></i> Çevrendeki Restoranlar</div>
+                    <div class="sec-sub">Teslimat adresine olan mesafeye göre listeleniyor</div>
+                </div>
+                <div class="badge badge-musait" id="rest-count-badge">7 Restoran açık</div>
+            </div>
+            
+            <!-- Category Filter Pills -->
+            <div class="cat-scroll" id="cat-pills"></div>
+            
+            <!-- Smart Sort Chips -->
+            <div class="sort-bar">
+                <div class="sort-chip active" id="sort-fast" onclick="setSortMode('fast')">
+                    <i class="fa-solid fa-bolt"></i> En Hızlı (Manhattan)
+                </div>
+                <div class="sort-chip" id="sort-rating" onclick="setSortMode('rating')">
+                    <i class="fa-solid fa-star"></i> En Yüksek Puan
+                </div>
+                <div class="sort-chip" id="sort-promo" onclick="setSortMode('promo')">
+                    <i class="fa-solid fa-tag"></i> Kampanyalılar
+                </div>
+                <div class="sort-chip" id="sort-delivery" onclick="setSortMode('delivery')">
+                    <i class="fa-solid fa-motorcycle"></i> Düşük Teslimat Ücreti
+                </div>
+            </div>
+            
+            <div class="rest-grid" id="rest-grid"></div>
+        </div>
+        
+        <!-- Menu & Cart Detail View -->
+        <div id="menu-section" class="customer-grid" style="display:none;">
+            <div>
+                <button class="btn btn-outline" style="margin-bottom:18px;" onclick="showRestaurants()">
+                    <i class="fa-solid fa-arrow-left"></i> Restoranlara Dön
+                </button>
+                
+                <div class="menu-header">
+                    <img class="menu-header-img" id="mh-img" src="" alt="">
+                    <div>
+                        <div class="menu-header-name" id="mh-name">Restoran Adı</div>
+                        <div class="menu-header-sub">
+                            <span class="mh-badge"><i class="fa-solid fa-star" style="color:var(--yellow);"></i> <strong id="mh-rating">4.8</strong></span>
+                            <span class="mh-badge"><i class="fa-solid fa-clock" style="color:var(--primary);"></i> <strong id="mh-time">25-35</strong> dk</span>
+                            <span class="mh-badge"><i class="fa-solid fa-location-dot" style="color:var(--blue);"></i> Konum: <strong id="mh-loc">(12, 8)</strong></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="food-grid" id="food-grid"></div>
+            </div>
+            
+            <!-- Cart & Tracker Sidebar -->
+            <div class="cart-sticky">
+                <div class="cart-box">
+                    <div class="cart-head">
+                        <div class="cart-title">
+                            <i class="fa-solid fa-bag-shopping" style="color:var(--primary);"></i>
+                            <span>Sepetim</span>
+                        </div>
+                        <span class="cart-count-badge" id="cart-badge">0</span>
+                    </div>
+                    
+                    <!-- Group Order & Delivery Type Bar -->
+                    <div class="cart-top-pills">
+                        <span class="cart-mode-indicator" id="cart-mode-indicator"><i class="fa-solid fa-motorcycle"></i> Adrese Teslim</span>
+                        <button class="btn-group-pill" id="btn-group-cart" onclick="openGroupOrderModal()" title="Arkadaşlarınla ortak sepet oluştur">
+                            <i class="fa-solid fa-users"></i> <span id="group-cart-label">Ortak Sepet</span>
+                        </button>
+                    </div>
+                    
+                    <div class="cart-body">
+                        <div style="font-size:12.5px;color:var(--text-3);margin-bottom:8px;">
+                            Restoran: <strong id="cart-from" style="color:var(--text);">—</strong>
+                        </div>
+                        
+                        <div class="cart-empty" id="cart-empty">
+                            <i class="fa-solid fa-basket-shopping"></i>
+                            <p>Sepetiniz şu anda boş.<br>Menüden ürün ekleyin.</p>
+                        </div>
+                        
+                        <div id="cart-items" style="display:none;"></div>
+                        
+                        <!-- Eco-friendly Delivery Option in Cart -->
+                        <div class="cart-eco-row" id="cart-eco-area" style="display:none;">
+                            <label class="eco-checkbox-label">
+                                <input type="checkbox" id="cart-eco-check" checked onchange="toggleEcoFriendly(this.checked)">
+                                <span><i class="fa-solid fa-leaf" style="color:var(--success);"></i> Doğa Dostu Yeşil Teslimat (Çatal/Bıçak İstemiyorum)</span>
+                            </label>
+                        </div>
+                        
+                        <div class="coupon-box" id="cart-coupon-area" style="display:none;">
+                            <input class="coupon-input" id="cart-coupon-code" placeholder="KUPON KODU (örn: GUSTO30)">
+                            <button class="coupon-btn" onclick="applyCartCouponInput()">Uygula</button>
+                        </div>
+                        
+                        <div class="cart-summary" id="cart-summ" style="display:none;">
+                            <div class="summ-row"><span>Ara Toplam</span><span id="s-sub">0.00 ₺</span></div>
+                            <div class="summ-row discount" id="s-discount-row" style="display:none;"><span>İndirim</span><span id="s-disc">-0.00 ₺</span></div>
+                            <div class="summ-row"><span>Teslimat</span><span id="s-del">0.00 ₺</span></div>
+                            <div class="summ-row"><span>Tahmini Süre</span><span id="s-time">~0 dk</span></div>
+                            <div class="summ-row total"><span>Ödenecek Tutar</span><span id="s-total">0.00 ₺</span></div>
+                        </div>
+                        
+                        <button class="btn-order" id="btn-order" disabled onclick="openCheckoutModal()">
+                            <i class="fa-solid fa-credit-card"></i> <span>Siparişi Tamamla & Öde</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Live Order Tracking Card -->
+                <div class="tracker-card">
+                    <div class="tracker-head">
+                        <div class="tracker-title">
+                            <i class="fa-solid fa-location-crosshairs" style="color:var(--primary);"></i>
+                            <span>Canlı Sipariş Takibi</span>
+                        </div>
+                        <span class="badge badge-alindi hidden" id="order-number-badge">#ORD-1001</span>
+                    </div>
+                    
+                    <div class="stepper">
+                        <div class="step-line"></div>
+                        <div class="step-fill" id="step-fill"></div>
+                        <div class="step" id="sn-alindi">
+                            <div class="step-dot"><i class="fa-solid fa-receipt"></i></div>
+                            <div class="step-label">Alındı</div>
+                        </div>
+                        <div class="step" id="sn-hazirlaniyor">
+                            <div class="step-dot"><i class="fa-solid fa-fire"></i></div>
+                            <div class="step-label">Hazırlanıyor</div>
+                        </div>
+                        <div class="step" id="sn-hazir">
+                            <div class="step-dot"><i class="fa-solid fa-box-open"></i></div>
+                            <div class="step-label">Hazır</div>
+                        </div>
+                        <div class="step" id="sn-yolda">
+                            <div class="step-dot"><i class="fa-solid fa-motorcycle"></i></div>
+                            <div class="step-label">Yolda</div>
+                        </div>
+                        <div class="step" id="sn-teslim_edildi">
+                            <div class="step-dot"><i class="fa-solid fa-circle-check"></i></div>
+                            <div class="step-label">Teslim Edildi</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Canlı Sıcaklık & Tazelik Göstergesi -->
+                    <div class="thermal-box" id="thermal-box" style="display:none;">
+                        <div class="thermal-head">
+                            <span><i class="fa-solid fa-temperature-half" style="color:#ff4757;"></i> Canlı Sıcaklık & Tazelik</span>
+                            <span id="thermal-temp" class="thermal-val">82°C (Termal Çantada)</span>
+                        </div>
+                        <div class="thermal-bar">
+                            <div id="thermal-fill" class="thermal-fill" style="width:85%;"></div>
+                        </div>
+                        <div class="thermal-scales">
+                            <span>60°C Ilık</span>
+                            <span>75°C Sıcak</span>
+                            <span>88°C Fırından Yeni Çıktı 🔥</span>
+                        </div>
+                    </div>
+
+                    <!-- Doğa Dostu Yeşil Teslimat Karbon Rozeti -->
+                    <div id="eco-saved-badge" class="eco-saved-badge" style="display:none;">
+                        <i class="fa-solid fa-seedling"></i> Bu siparişle <strong>-140g CO2</strong> ve plastik atığı önlendi!
+                    </div>
+
+                    <!-- Yol Üstü Fırsatı (Roadside Add-on Deal Banner) -->
+                    <div class="addon-deal-card" id="addon-deal-card" style="display:none;">
+                        <div class="addon-head">
+                            <span class="badge badge-addon"><i class="fa-solid fa-location-arrow"></i> YOL ÜSTÜ FIRSATI</span>
+                            <span class="addon-free-del">+0 ₺ Ek Teslimat Ücreti</span>
+                        </div>
+                        <div class="addon-title" id="addon-deal-title">Tatlı Dünyası'ndan San Sebastian Cheesecake</div>
+                        <div class="addon-desc">Kuryeniz bu restorana 2 sokak mesafede. Tek tıkla rotaya durak ekleyin!</div>
+                        <div class="addon-foot">
+                            <span class="addon-price" id="addon-deal-price">+95.00 ₺</span>
+                            <button class="btn btn-sm btn-primary" onclick="acceptRoadsideAddon()">
+                                <i class="fa-solid fa-plus"></i> Siparişe Ekle
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="tracker-info">
+                        <div>
+                            <div class="tracker-status-text" id="tracker-text">Henüz aktif siparişiniz bulunmuyor.</div>
+                            <div class="tracker-sub" id="tracker-sub">Menüden dilediğiniz lezzetleri sepete ekleyebilirsiniz.</div>
+                        </div>
+                        <div class="tracker-btns">
+                            <button class="btn-chat hidden" id="btn-chat-courier" onclick="openChatModal()">
+                                <i class="fa-solid fa-comment-dots"></i> Kurye ile Mesajlaş
+                            </button>
+                            <button class="btn-receipt" onclick="openReceiptModal()">
+                                <i class="fa-solid fa-receipt"></i> Fişi Gör
+                            </button>
+                            <button class="btn-cancel" id="btn-cancel" disabled onclick="cancelOrder()">
+                                <i class="fa-solid fa-ban"></i> Siparişi İptal Et
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 2D Live Animated Manhattan Grid Map -->
+                    <div class="map-box">
+                        <div class="map-head">
+                            <span><i class="fa-solid fa-satellite-dish" style="color:var(--primary);"></i> Canlı Manhattan Kurye Simülasyonu</span>
+                            <div class="map-legend">
+                                <span><span style="width:10px;height:10px;border-radius:50%;background:var(--primary);display:inline-block;"></span> Restoran</span>
+                                <span><span style="width:10px;height:10px;border-radius:50%;background:var(--blue);display:inline-block;"></span> Kurye 🛵</span>
+                                <span><span style="width:10px;height:10px;border-radius:50%;background:var(--success);display:inline-block;"></span> Müşteri 🏠</span>
+                            </div>
+                        </div>
+                        <canvas id="customer-map-canvas" class="map-canvas" width="600" height="250"></canvas>
+                    </div>
+                    
+                    <div style="margin-top:14px;padding:12px;background:var(--surface-2);border-radius:14px;font-size:12.5px;color:var(--text-2);display:flex;justify-content:space-between;align-items:center;">
+                        <span id="sim-indicator"><i class="fa-solid fa-play" style="color:var(--success);"></i> Simülasyon: Otomatik İlerleme Açık</span>
+                        <button class="btn btn-sm btn-outline" onclick="toggleSimMode()" id="btn-toggle-sim">Durdur / Manuel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ======================================================== -->
+    <!-- 2. SATICI / RESTORAN PANELİ                               -->
+    <!-- ======================================================== -->
+    <div id="view-restaurant" class="panel-wrap hidden">
+        <div class="panel-top-bar">
+            <div class="panel-top-title"><i class="fa-solid fa-utensils" style="color:var(--primary);"></i> Restoran Yönetim & Mutfak Ekranı</div>
+            <div style="display:flex;gap:12px;align-items:center;">
+                <label style="font-size:13px;font-weight:700;color:var(--text-2);">Aktif Restoran:</label>
+                <select class="form-input" id="res-selector" style="width:230px;" onchange="changeVendorRestaurant()"></select>
+            </div>
+        </div>
+        
+        <div class="kpi-row">
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background:rgba(47,142,255,0.15);color:var(--blue);"><i class="fa-solid fa-bowl-food"></i></div>
+                <div><div class="kpi-label">Toplam Sipariş</div><div class="kpi-val" id="kpi-orders">0 Adet</div></div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background:rgba(11,191,128,0.15);color:var(--success);"><i class="fa-solid fa-turkish-lira-sign"></i></div>
+                <div><div class="kpi-label">Günlük Ciro</div><div class="kpi-val" id="kpi-revenue">0.00 ₺</div></div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background:rgba(250,74,12,0.15);color:var(--primary);"><i class="fa-solid fa-chart-line"></i></div>
+                <div><div class="kpi-label">Restoran Puanı</div><div class="kpi-val" id="kpi-res-rating">4.9 ⭐</div></div>
+            </div>
+        </div>
+        
+        <div class="panel-card">
+            <div class="panel-card-head">
+                <div class="panel-card-title"><i class="fa-solid fa-bell" style="color:var(--yellow);"></i> Gelen Mutfak Siparişleri (Canlı Durum Kontrolü)</div>
+                <div style="display:flex;gap:8px;">
+                    <button class="btn btn-sm btn-outline" onclick="GustoAudio.play('bell');showToast('🔔', 'KDS Mutfak Bildirim Zili Çaldı!');" title="KDS Mutfak Yeni Sipariş Zili"><i class="fa-solid fa-bell"></i> KDS Zil Çal</button>
+                    <button class="btn btn-sm btn-outline" onclick="printKdsKitchenSlip()" title="KDS Mutfak Fişi"><i class="fa-solid fa-print"></i> Mutfak Fişi</button>
+                </div>
+            </div>
+            <div class="tbl-responsive">
+                <table class="tbl">
+                    <thead>
+                        <tr>
+                            <th>Sipariş No</th>
+                            <th>Müşteri</th>
+                            <th>Ürünler</th>
+                            <th>Tutar</th>
+                            <th>Durum</th>
+                            <th>Mutfak İşlemi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="res-orders-body"></tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="panel-card">
+            <div class="panel-card-head">
+                <div class="panel-card-title"><i class="fa-solid fa-list" style="color:var(--primary);"></i> Menü & Stok Yönetimi (Tükendi / Satışta)</div>
+            </div>
+            <div class="tbl-responsive">
+                <table class="tbl">
+                    <thead>
+                        <tr>
+                            <th>Yemek Adı</th>
+                            <th>Açıklama</th>
+                            <th>Fiyat</th>
+                            <th>Stok Durumu</th>
+                            <th>İşlem</th>
+                        </tr>
+                    </thead>
+                    <tbody id="res-menu-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ======================================================== -->
+    <!-- 3. KURYE PANELİ (COURIER PORTAL)                          -->
+    <!-- ======================================================== -->
+    <div id="view-courier" class="panel-wrap hidden">
+        <div class="panel-top-bar">
+            <div class="panel-top-title"><i class="fa-solid fa-motorcycle" style="color:var(--primary);"></i> Kurye Teslimat & Kazanç Paneli</div>
+            <div style="display:flex;gap:12px;align-items:center;">
+                <label style="font-size:13px;font-weight:700;color:var(--text-2);">Aktif Kurye:</label>
+                <select class="form-input" id="courier-selector" style="width:230px;" onchange="changeCourierUser()"></select>
+            </div>
+        </div>
+        
+        <div class="kpi-row">
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background:rgba(47,142,255,0.15);color:var(--blue);"><i class="fa-solid fa-route"></i></div>
+                <div><div class="kpi-label">Anlık Izgara Konumu</div><div class="kpi-val" id="courier-kpi-loc">(14, 10)</div></div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background:rgba(11,191,128,0.15);color:var(--success);"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+                <div><div class="kpi-label">Toplam Bahşiş & Kazanç</div><div class="kpi-val" id="courier-kpi-earnings">185.00 ₺</div></div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background:rgba(250,74,12,0.15);color:var(--primary);"><i class="fa-solid fa-trophy"></i></div>
+                <div><div class="kpi-label">Teslimat Puanı</div><div class="kpi-val">4.95 ⭐</div></div>
+            </div>
+        </div>
+        
+        <div class="panel-card">
+            <div class="panel-card-head">
+                <div class="panel-card-title"><i class="fa-solid fa-box-archive" style="color:var(--primary);"></i> Atanmış Teslimat Görevi</div>
+                <span class="badge badge-musait" id="courier-badge-status">MÜSAİT</span>
+            </div>
+            <div id="courier-task-area"></div>
+        </div>
+        
+        <div class="panel-card">
+            <div class="panel-card-head">
+                <div class="panel-card-title"><i class="fa-solid fa-map-pin" style="color:var(--blue);"></i> Konumumu Güncelle (Manhattan Izgarası)</div>
+            </div>
+            <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
+                <label>X Koordinatı: <input type="number" id="courier-input-x" class="form-input" style="width:90px;display:inline-block;" value="14" min="0" max="35"></label>
+                <label>Y Koordinatı: <input type="number" id="courier-input-y" class="form-input" style="width:90px;display:inline-block;" value="10" min="0" max="35"></label>
+                <button class="btn btn-primary" onclick="updateCourierLocation()"><i class="fa-solid fa-floppy-disk"></i> Konumu Kaydet</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ======================================================== -->
+    <!-- 4. YÖNETİCİ / ADMİN PANELİ                                -->
+    <!-- ======================================================== -->
+    <div id="view-admin" class="panel-wrap hidden">
+        <div class="panel-top-bar">
+            <div class="panel-top-title"><i class="fa-solid fa-shield-halved" style="color:var(--purple);"></i> Sistem Yönetici Denetim Merkezi</div>
+        </div>
+        
+        <div class="panel-card">
+            <div class="panel-card-head">
+                <div class="panel-card-title"><i class="fa-solid fa-map-location-dot" style="color:var(--primary);"></i> Şehir Izgara Haritası (35x35)</div>
+            </div>
+            <canvas id="admin-map-canvas" class="map-canvas" width="900" height="260" style="height:260px;"></canvas>
+        </div>
+        
+        <div class="panel-card">
+            <div class="panel-card-head">
+                <div class="panel-card-title"><i class="fa-solid fa-users" style="color:var(--blue);"></i> Kurye Filosu & Manhattan Atama Puanları</div>
+            </div>
+            <div class="tbl-responsive">
+                <table class="tbl">
+                    <thead>
+                        <tr>
+                            <th>Kurye Adı</th>
+                            <th>Araç Tipi</th>
+                            <th>Konum</th>
+                            <th>Aktif Görev</th>
+                            <th>Manhattan Skoru: Dist + (2×Aktif)</th>
+                            <th>Durum</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-couriers-body"></tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="panel-card">
+            <div class="panel-card-head">
+                <div class="panel-card-title"><i class="fa-solid fa-clock-rotate-left" style="color:var(--purple);"></i> Sipariş Durum Tarihçesi (Audit Log)</div>
+            </div>
+            <div class="tbl-responsive">
+                <table class="tbl">
+                    <thead>
+                        <tr>
+                            <th>Zaman</th>
+                            <th>Sipariş No</th>
+                            <th>Önceki Durum</th>
+                            <th>Yeni Durum</th>
+                            <th>Değiştiren Rol</th>
+                            <th>Açıklama</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-audit-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- ======================================================== -->
+<!-- MODALLAR                                                 -->
+<!-- ======================================================== -->
+
+<!-- 1. Ürün Özelleştirme Modalı -->
+<div class="modal-overlay" id="customizer-overlay">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeCustomizer()"><i class="fa-solid fa-xmark"></i></button>
+        <div style="display:flex;gap:16px;align-items:center;margin-bottom:16px;">
+            <img id="cust-img" src="" style="width:90px;height:90px;border-radius:18px;object-fit:cover;">
+            <div>
+                <h3 id="cust-name" style="font-size:20px;font-weight:900;color:var(--text);margin-bottom:4px;">Yemek Adı</h3>
+                <p id="cust-desc" style="font-size:13px;color:var(--text-2);line-height:1.4;">Açıklama</p>
+                <div id="cust-base-price" style="font-size:18px;font-weight:900;color:var(--primary);margin-top:6px;">0.00 ₺</div>
+            </div>
+        </div>
+        
+        <div class="custom-sec-title"><span>Porsiyon / Boyut Seçimi</span> <span style="font-size:11.5px;color:var(--primary);">Zorunlu</span></div>
+        <div class="choice-pill-group">
+            <div class="choice-pill selected" id="opt-size-1" onclick="selectPortion(0, 'Standart Porsiyon')">
+                <span>Standart Porsiyon</span> <span>+0.00 ₺</span>
+            </div>
+            <div class="choice-pill" id="opt-size-2" onclick="selectPortion(35, '1.5 Doyurucu Porsiyon')">
+                <span>1.5 Doyurucu Porsiyon</span> <span>+35.00 ₺</span>
+            </div>
+            <div class="choice-pill" id="opt-size-3" onclick="selectPortion(65, 'Mega Duble Porsiyon')">
+                <span>Mega Duble Porsiyon</span> <span>+65.00 ₺</span>
+            </div>
+        </div>
+        
+        <div class="custom-sec-title"><span>Ekstra Malzemeler & Soslar</span> <span style="font-size:11.5px;color:var(--text-3);">İsteğe Bağlı</span></div>
+        <label class="checkbox-row">
+            <span>🧀 Bol Eritilmiş Kaşar / Cheddar</span>
+            <div style="display:flex;align-items:center;gap:10px;"><span style="color:var(--primary);">+25.00 ₺</span><input type="checkbox" id="extra-cheese" value="25" onchange="calcCustomTotal()"></div>
+        </label>
+        <label class="checkbox-row">
+            <span>🍟 Çıtır Baharatlı Patates Ekle</span>
+            <div style="display:flex;align-items:center;gap:10px;"><span style="color:var(--primary);">+30.00 ₺</span><input type="checkbox" id="extra-fries" value="30" onchange="calcCustomTotal()"></div>
+        </label>
+        <label class="checkbox-row">
+            <span>🌶️ Jalapeno & Acı Sos</span>
+            <div style="display:flex;align-items:center;gap:10px;"><span style="color:var(--primary);">+15.00 ₺</span><input type="checkbox" id="extra-spicy" value="15" onchange="calcCustomTotal()"></div>
+        </label>
+        <label class="checkbox-row">
+            <span>🍄 Trüf Yağlı Özel Mayonez</span>
+            <div style="display:flex;align-items:center;gap:10px;"><span style="color:var(--primary);">+20.00 ₺</span><input type="checkbox" id="extra-truffle" value="20" onchange="calcCustomTotal()"></div>
+        </label>
+        
+        <div class="custom-sec-title"><span>İstemediğiniz Malzemeler</span></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+            <label class="chat-pill" style="display:flex;align-items:center;gap:6px;"><input type="checkbox" id="rem-onion"> Soğansız</label>
+            <label class="chat-pill" style="display:flex;align-items:center;gap:6px;"><input type="checkbox" id="rem-pickle"> Turşusuz</label>
+            <label class="chat-pill" style="display:flex;align-items:center;gap:6px;"><input type="checkbox" id="rem-tomato"> Domatessiz</label>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Mutfak Şefine Not</label>
+            <input type="text" class="form-input" id="cust-note" placeholder="Örn: Sosu ayrı kapta olsun, çıtır pişsin…">
+        </div>
+        
+        <div style="display:flex;gap:14px;align-items:center;margin-top:20px;">
+            <div class="qty-ctrl" style="background:var(--surface-2);border:1.5px solid var(--border);border-radius:14px;padding:6px 12px;">
+                <button class="qty-btn" onclick="changeCustomQty(-1)">−</button>
+                <span class="qty-val" id="cust-qty" style="font-size:16px;">1</span>
+                <button class="qty-btn" onclick="changeCustomQty(1)">+</button>
+            </div>
+            <button class="btn btn-primary" style="flex:1;padding:14px;font-size:15px;" onclick="addCustomizedItemToCart()">
+                <i class="fa-solid fa-plus"></i> <span id="btn-cust-text">Sepete Ekle • 0.00 ₺</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- 2. Gelişmiş Ödeme & Checkout Modalı -->
+<div class="modal-overlay" id="checkout-overlay">
+    <div class="modal-box modal-box-wide">
+        <button class="modal-close" onclick="closeCheckoutModal()"><i class="fa-solid fa-xmark"></i></button>
+        <div style="font-size:22px;font-weight:900;color:var(--text);margin-bottom:6px;"><i class="fa-solid fa-shield-halved" style="color:var(--primary);"></i> Siparişi Onayla & Öde</div>
+        <p style="font-size:13px;color:var(--text-2);margin-bottom:16px;">Ödeme yönteminizi, kurye bahşişini ve teslimat talimatlarını belirleyin.</p>
+        
+        <!-- Delivery Mode Notice -->
+        <div id="checkout-del-mode-notice" class="del-mode-notice" style="display:none;">
+            <i class="fa-solid fa-person-walking" style="font-size:18px;"></i>
+            <div>
+                <strong>🚶 Gel-Al Siparişi:</strong> Siparişiniz restorandan sizin tarafınızdan teslim alınacak.
+                <div style="font-size:11.5px;opacity:0.9;">Teslimat ücreti 0 ₺ • %20 Gel-Al İndirimi Otomatik Uygulandı!</div>
+            </div>
+        </div>
+
+        <div class="custom-sec-title"><span>1. Ödeme Yöntemi Seçin</span></div>
+        <div class="pay-method-cards">
+            <div class="pay-card active" id="pay-card-cc" onclick="selectPayMethod('cc')">
+                <i class="fa-solid fa-credit-card"></i>
+                <span>Kredi / Banka Kartı</span>
+            </div>
+            <div class="pay-card" id="pay-card-cod" onclick="selectPayMethod('cod')">
+                <i class="fa-solid fa-money-bill-wave"></i>
+                <span>Kapıda Nakit / POS</span>
+            </div>
+            <div class="pay-card" id="pay-card-wallet" onclick="selectPayMethod('wallet')">
+                <i class="fa-solid fa-wallet"></i>
+                <span>GustoCüzdan</span>
+            </div>
+        </div>
+        
+        <!-- Kredi Kartı Formu -->
+        <div id="cc-form-area" style="background:var(--surface-2);border:1.5px solid var(--border);border-radius:16px;padding:16px;margin-bottom:16px;">
+            <div class="form-group">
+                <label class="form-label">Kart Numarası</label>
+                <input class="form-input" placeholder="4543 •••• •••• 9821" value="4543 8920 1124 9821">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Son Kullanma</label>
+                    <input class="form-input" placeholder="AA/YY" value="11/28">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">CVV Güvenlik</label>
+                    <input class="form-input" placeholder="•••" value="384">
+                </div>
+            </div>
+        </div>
+        
+        <div class="custom-sec-title"><span>2. Kuryeye Bahşiş Ekle (Doğrudan Kuryeye Aktarılır)</span></div>
+        <div class="tip-pills">
+            <div class="tip-pill active" id="tip-0" onclick="setTip(0)">Yok (0 ₺)</div>
+            <div class="tip-pill" id="tip-10" onclick="setTip(10)">+10 ₺</div>
+            <div class="tip-pill" id="tip-20" onclick="setTip(20)">+20 ₺ ⭐</div>
+            <div class="tip-pill" id="tip-50" onclick="setTip(50)">+50 ₺ 🚀</div>
+        </div>
+
+        <div class="custom-sec-title"><span>3. Teslimat Zamanı (Hemen veya İleri Tarihli)</span></div>
+        <div class="sched-pills" id="sched-pills">
+            <div class="sched-pill active" onclick="setScheduledTime('now', this)"><i class="fa-solid fa-bolt"></i> Hemen Gelsin (~25 dk)</div>
+            <div class="sched-pill" onclick="setScheduledTime('19:00 - 19:30', this)"><i class="fa-regular fa-clock"></i> 19:00 - 19:30</div>
+            <div class="sched-pill" onclick="setScheduledTime('20:00 - 20:30', this)"><i class="fa-regular fa-clock"></i> 20:00 - 20:30</div>
+            <div class="sched-pill" onclick="setScheduledTime('21:00 - 21:30', this)"><i class="fa-regular fa-clock"></i> 21:00 - 21:30</div>
+        </div>
+        
+        <div class="custom-sec-title"><span>4. Akıllı Teslimat Talimatları & Özel Not</span></div>
+        <div class="instruction-chips" id="instruction-chips">
+            <div class="inst-chip active" onclick="selectInstruction('Zile Basma Bebek Uyuyor 👶', this)">
+                <i class="fa-solid fa-baby"></i> Zile Basma Bebek Uyuyor
+            </div>
+            <div class="inst-chip" onclick="selectInstruction('Kapıya As & Zile Bas 🚪', this)">
+                <i class="fa-solid fa-door-open"></i> Kapıya As & Zile Bas
+            </div>
+            <div class="inst-chip" onclick="selectInstruction('Güvenliğe Bırak 🛡️', this)">
+                <i class="fa-solid fa-shield"></i> Güvenliğe Bırak
+            </div>
+            <div class="inst-chip" onclick="selectInstruction('Gelince Ara / Kapıdayım De 📞', this)">
+                <i class="fa-solid fa-phone"></i> Gelince Ara
+            </div>
+        </div>
+        <input type="text" class="form-input" id="delivery-custom-note" placeholder="Kurye için ek adres veya teslimat detayı (örn: Kat 4, Zil: Yılmaz)…" style="margin-top:10px;">
+        
+        <label class="checkbox-row" style="margin-top:14px;">
+            <span>🌱 Doğayı Koru: Plastik çatal, kaşık ve peçete istemiyorum (-140g CO2)</span>
+            <input type="checkbox" id="eco-choice" checked onchange="toggleEcoFriendly(this.checked)">
+        </label>
+        
+        <div style="background:var(--surface-2);border-radius:16px;padding:16px;margin:18px 0;display:flex;justify-content:space-between;align-items:center;">
+            <div>
+                <div style="font-size:12px;color:var(--text-3);">Toplam Çekilecek Tutar</div>
+                <div style="font-size:24px;font-weight:900;color:var(--primary);" id="checkout-final-total">0.00 ₺</div>
+            </div>
+            <button class="btn btn-primary" style="padding:14px 28px;font-size:15px;" onclick="confirmCheckoutAndPlaceOrder()">
+                <i class="fa-solid fa-lock"></i> Siparişi Onayla & Başlat
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- 3. Değerlendirme & Yorum Modalı (Kırılımlı: Lezzet, Hız, Servis) -->
+<div class="modal-overlay" id="rating-overlay">
+    <div class="modal-box" style="text-align:center;max-width:520px;">
+        <button class="modal-close" onclick="closeRatingModal()"><i class="fa-solid fa-xmark"></i></button>
+        <div style="font-size:46px;margin-bottom:8px;">🎉</div>
+        <h2 style="font-size:22px;font-weight:900;color:var(--text);margin-bottom:6px;">Siparişiniz Teslim Edildi!</h2>
+        <p style="font-size:13.5px;color:var(--text-2);margin-bottom:18px;">Deneyiminizi puanlayarak <strong>+25 GustoPuan</strong> kazanın!</p>
+        
+        <!-- 3 Kırılımlı Puanlama -->
+        <div class="rating-categories-card">
+            <div class="rating-cat-row">
+                <span class="rating-cat-label"><i class="fa-solid fa-pizza-slice" style="color:var(--primary);"></i> Lezzet Puanı</span>
+                <div class="stars-row" id="taste-stars">
+                    <i class="fa-solid fa-star active" onclick="setStars('taste', 1)"></i>
+                    <i class="fa-solid fa-star active" onclick="setStars('taste', 2)"></i>
+                    <i class="fa-solid fa-star active" onclick="setStars('taste', 3)"></i>
+                    <i class="fa-solid fa-star active" onclick="setStars('taste', 4)"></i>
+                    <i class="fa-solid fa-star active" onclick="setStars('taste', 5)"></i>
+                </div>
+            </div>
+            <div class="rating-cat-row">
+                <span class="rating-cat-label"><i class="fa-solid fa-bolt" style="color:var(--blue);"></i> Teslimat Hızı</span>
+                <div class="stars-row" id="speed-stars">
+                    <i class="fa-solid fa-star active" onclick="setStars('speed', 1)"></i>
+                    <i class="fa-solid fa-star active" onclick="setStars('speed', 2)"></i>
+                    <i class="fa-solid fa-star active" onclick="setStars('speed', 3)"></i>
+                    <i class="fa-solid fa-star active" onclick="setStars('speed', 4)"></i>
+                    <i class="fa-solid fa-star active" onclick="setStars('speed', 5)"></i>
+                </div>
+            </div>
+            <div class="rating-cat-row">
+                <span class="rating-cat-label"><i class="fa-solid fa-box-open" style="color:var(--success);"></i> Paket & Servis</span>
+                <div class="stars-row" id="service-stars">
+                    <i class="fa-solid fa-star active" onclick="setStars('service', 1)"></i>
+                    <i class="fa-solid fa-star active" onclick="setStars('service', 2)"></i>
+                    <i class="fa-solid fa-star active" onclick="setStars('service', 3)"></i>
+                    <i class="fa-solid fa-star active" onclick="setStars('service', 4)"></i>
+                    <i class="fa-solid fa-star active" onclick="setStars('service', 5)"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Değerlendirme Etiketleri -->
+        <div style="font-size:12.5px;font-weight:800;color:var(--text-2);text-align:left;margin:14px 0 8px 0;">Öne Çıkan Özellikler (Tıklayarak Seçin):</div>
+        <div class="rating-tag-chips" id="rating-tags-wrap">
+            <span class="rating-tag-chip active" onclick="toggleRatingTag(this)"><i class="fa-solid fa-fire"></i> Sıcacık Geldi</span>
+            <span class="rating-tag-chip active" onclick="toggleRatingTag(this)"><i class="fa-solid fa-bolt"></i> Süper Hızlı</span>
+            <span class="rating-tag-chip" onclick="toggleRatingTag(this)"><i class="fa-solid fa-box"></i> Özenli Paket</span>
+            <span class="rating-tag-chip" onclick="toggleRatingTag(this)"><i class="fa-solid fa-smile"></i> Kurye Çok Kibardı</span>
+            <span class="rating-tag-chip" onclick="toggleRatingTag(this)"><i class="fa-solid fa-burger"></i> Doyurucu Porsiyon</span>
+            <span class="rating-tag-chip" onclick="toggleRatingTag(this)"><i class="fa-solid fa-leaf"></i> Doğa Dostu Paket</span>
+        </div>
+        
+        <div class="form-group" style="margin-top:14px;">
+            <input type="text" class="form-input" id="review-comment" placeholder="Yemeğin lezzeti ve teslimat hakkında yorumunuz…" value="Çok sıcak ve taze geldi, kurye arkadaşa da teşekkürler!">
+        </div>
+        
+        <button class="btn btn-primary" style="width:100%;padding:14px;" onclick="submitRatingAndReward()">
+            <i class="fa-solid fa-award"></i> Değerlendirmeyi Gönder (+25 Puan Al)
+        </button>
+    </div>
+</div>
+
+<!-- 3.1. Şanslı Gusto Çarkı Modalı (Gamification Spin Wheel) -->
+<div class="modal-overlay" id="wheel-overlay">
+    <div class="modal-box" style="text-align:center;max-width:440px;">
+        <button class="modal-close" onclick="closeWheelModal()"><i class="fa-solid fa-xmark"></i></button>
+        <div style="font-size:20px;font-weight:900;color:var(--text);margin-bottom:4px;">
+            <i class="fa-solid fa-dharmachakra" style="color:var(--primary);"></i> Şanslı Gusto Çarkı
+        </div>
+        <p style="font-size:12.5px;color:var(--text-2);margin-bottom:14px;">Çarkı çevir, anında indirim kuponu ve hediye GustoPuan kazan!</p>
+        
+        <!-- Canvas Wheel Container -->
+        <div class="wheel-stage">
+            <div class="wheel-pointer">▼</div>
+            <canvas id="wheel-canvas" width="300" height="300" class="wheel-canvas"></canvas>
+        </div>
+
+        <div class="wheel-spins-meta" style="margin-top:12px;font-size:13px;color:var(--text-2);">
+            Kalan Çevirme Hakkı: <strong style="color:var(--primary);" id="wheel-spins-count">1</strong>
+        </div>
+
+        <button class="btn btn-primary" id="btn-spin-wheel" style="width:100%;padding:14px;font-size:15px;margin-top:12px;" onclick="spinLuckyWheel()">
+            <i class="fa-solid fa-rotate-right"></i> Çarkı Çevir & Kazan!
+        </button>
+    </div>
+</div>
+
+<!-- 3.2. Ortak Sepet / Grup Siparişi Modalı (Group Order) -->
+<div class="modal-overlay" id="group-order-overlay">
+    <div class="modal-box" style="max-width:500px;">
+        <button class="modal-close" onclick="closeGroupOrderModal()"><i class="fa-solid fa-xmark"></i></button>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+            <i class="fa-solid fa-users" style="color:var(--blue);font-size:24px;"></i>
+            <h2 style="font-size:20px;font-weight:900;color:var(--text);">Ortak Sepet & Grup Siparişi</h2>
+        </div>
+        <p style="font-size:12.5px;color:var(--text-2);margin-bottom:16px;">Arkadaşlarınızı veya ofis ekibinizi davet edin, herkes kendi yemeğini seçsin, tek seferde gelsin!</p>
+        
+        <!-- Group Code & Share Link -->
+        <div class="group-share-box">
+            <div>
+                <div style="font-size:11px;color:var(--text-3);text-transform:uppercase;font-weight:800;">Grup Sipariş Kodu</div>
+                <div style="font-size:20px;font-weight:900;color:var(--primary);letter-spacing:1px;" id="group-order-code">GUSTO-7429</div>
+            </div>
+            <button class="btn btn-sm btn-outline" onclick="copyGroupOrderLink()">
+                <i class="fa-solid fa-copy"></i> Linki Kopyala
+            </button>
+        </div>
+
+        <!-- Participants List -->
+        <div style="font-size:12px;font-weight:800;color:var(--text-3);text-transform:uppercase;margin:16px 0 8px 0;">Gruptaki Katılımcılar ve Seçimleri</div>
+        <div class="group-members-list" id="group-members-list">
+            <!-- Dynamic member cards -->
+        </div>
+
+        <!-- Add Simulated Friend -->
+        <div style="display:flex;gap:8px;margin-top:12px;">
+            <input type="text" class="form-input" id="group-friend-name" placeholder="Arkadaş ekle (örn: Selin, Burak)…" style="font-size:13px;">
+            <button class="btn btn-outline" onclick="addGroupSimulatedMember()"><i class="fa-solid fa-user-plus"></i> Ekle</button>
+        </div>
+
+        <button class="btn btn-primary" style="width:100%;padding:14px;margin-top:18px;" onclick="closeGroupOrderModal()">
+            <i class="fa-solid fa-check"></i> Sepete Dön & Siparişi Birleştir
+        </button>
+    </div>
+</div>
+
+<!-- 4. Kurye Canlı Mesajlaşma Modalı -->
+<div class="modal-overlay" id="chat-overlay">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeChatModal()"><i class="fa-solid fa-xmark"></i></button>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+            <div style="width:40px;height:40px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;"><i class="fa-solid fa-motorcycle"></i></div>
+            <div>
+                <div style="font-size:16px;font-weight:900;color:var(--text);" id="chat-courier-name">Ali Kaya (Kurye 🛵)</div>
+                <div style="font-size:12px;color:var(--success);font-weight:700;"><i class="fa-solid fa-circle" style="font-size:8px;"></i> Çevrimiçi • Teslimat yolunda</div>
+            </div>
+        </div>
+        
+        <div class="chat-body" id="chat-messages">
+            <div class="chat-msg courier">Merhaba! Siparişinizi restorandan aldım, kapınıza doğru yola çıktım. Bir isteğiniz var mı?</div>
+        </div>
+        
+        <div class="chat-quick-replies">
+            <span class="chat-pill" onclick="sendQuickChat('Zil bozuk lütfen arayın 📞')">Zil bozuk lütfen arayın 📞</span>
+            <span class="chat-pill" onclick="sendQuickChat('Kapıya bırakabilirsiniz 🚪')">Kapıya bırakabilirsiniz 🚪</span>
+            <span class="chat-pill" onclick="sendQuickChat('Kolay gelsin teşekkürler 👍')">Kolay gelsin teşekkürler 👍</span>
+        </div>
+        
+        <div style="display:flex;gap:8px;">
+            <input type="text" class="form-input" id="chat-input" placeholder="Kuryeye mesaj yazın…" onkeypress="if(event.key==='Enter') sendChatMessage()">
+            <button class="btn btn-primary" onclick="sendChatMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+</div>
+
+<!-- 5. Adres / Konum Modalı -->
+<div class="modal-overlay" id="address-overlay">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeAddressModal()"><i class="fa-solid fa-xmark"></i></button>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+            <i class="fa-solid fa-location-dot" style="color:var(--primary);font-size:22px;"></i>
+            <h2 style="font-size:20px;font-weight:900;color:var(--text);">Teslimat Konumu ve Adreslerim</h2>
+        </div>
+        <p style="font-size:12.5px;color:var(--text-2);margin-bottom:18px;">Manhattan mesafe hesabı bu koordinatlara göre yapılır</p>
+        
+        <div style="font-size:12px;font-weight:800;color:var(--text-3);text-transform:uppercase;margin-bottom:10px;">Kayıtlı Adresleriniz</div>
+        <div id="saved-address-list"></div>
+        
+        <div style="background:var(--surface-2);border-radius:18px;padding:18px;margin-top:16px;">
+            <div style="font-size:13.5px;font-weight:800;color:var(--text);margin-bottom:10px;"><i class="fa-solid fa-circle-plus" style="color:var(--primary);"></i> Yeni Adres & Izgara Konumu Ekle</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Adres Başlığı</label>
+                    <input type="text" class="form-input" id="new-addr-title" placeholder="Örn: Ofis / Yazlık">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Açık Adres / Semt</label>
+                    <input type="text" class="form-input" id="new-addr-desc" placeholder="Örn: Levent Kanyon Yanı">
+                </div>
+            </div>
+            
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:12.5px;color:var(--text-2);">
+                <span><i class="fa-solid fa-hand-pointer" style="color:var(--primary);"></i> Izgaraya tıklayarak konumu seçin:</span>
+                <strong style="color:var(--primary);" id="picker-coord-text">Seçili: (X: 18, Y: 14)</strong>
+            </div>
+            <canvas id="address-picker-canvas" width="500" height="170" style="width:100%;height:170px;border-radius:12px;border:1px solid var(--border);cursor:crosshair;background:var(--surface);" onclick="GustoMap.handlePickerMapClick(event)"></canvas>
+            
+            <div class="form-row" style="margin-top:12px;">
+                <div class="form-group">
+                    <label class="form-label">X Koordinatı (0–35)</label>
+                    <input type="number" class="form-input" id="picker-x" value="18" min="0" max="35" onchange="syncPickerFromInputs()">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Y Koordinatı (0–35)</label>
+                    <input type="number" class="form-input" id="picker-y" value="14" min="0" max="35" onchange="syncPickerFromInputs()">
+                </div>
+            </div>
+            
+            <button class="btn btn-primary" style="width:100%;padding:12px;margin-top:4px;" onclick="addNewAddress()">
+                <i class="fa-solid fa-check"></i> Bu Adresi Kaydet ve Kullan
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- 6. Kullanıcı Profil / Hesap Yönetimi Modalı -->
+<div class="modal-overlay" id="account-overlay">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeAccountModal()"><i class="fa-solid fa-xmark"></i></button>
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;">
+            <div class="user-avatar" style="width:50px;height:50px;font-size:22px;"><i class="fa-solid fa-user-gear"></i></div>
+            <div>
+                <h2 style="font-size:20px;font-weight:900;color:var(--text);" id="acc-header-name">Ahmet Yılmaz</h2>
+                <div style="font-size:13px;color:var(--text-2);display:flex;gap:12px;margin-top:3px;flex-wrap:wrap;">
+                    <span style="color:var(--success);font-weight:800;"><i class="fa-solid fa-wallet"></i> Bakiye: <strong id="acc-points">145 GustoPuan (14.50 ₺)</strong></span>
+                    <span><i class="fa-solid fa-bag-shopping" style="color:var(--blue);"></i> Toplam Sipariş: <strong id="acc-order-count">0</strong></span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="modal-tabs">
+            <button class="modal-tab-btn active" id="acc-tab-btn-profile" onclick="switchAccountTab('profile')"><i class="fa-solid fa-id-card"></i> Profilim</button>
+            <button class="modal-tab-btn" id="acc-tab-btn-orders" onclick="switchAccountTab('orders')"><i class="fa-solid fa-clock-rotate-left"></i> Siparişlerim</button>
+            <button class="modal-tab-btn" id="acc-tab-btn-coupons" onclick="switchAccountTab('coupons')"><i class="fa-solid fa-ticket"></i> Kuponlarım</button>
+            <button class="modal-tab-btn" id="acc-tab-btn-favs" onclick="switchAccountTab('favs')"><i class="fa-solid fa-heart"></i> Favorilerim</button>
+        </div>
+        
+        <!-- Tab 1: Profilim -->
+        <div id="acc-tab-profile">
+            <form onsubmit="handleUpdateProfile(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Ad Soyad</label>
+                        <input type="text" class="form-input" id="profile-fullname" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Telefon Numarası</label>
+                        <input type="tel" class="form-input" id="profile-phone" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">E-Posta Adresi</label>
+                    <input type="email" class="form-input" id="profile-email" required>
+                </div>
+                <div style="background:var(--surface-2);border-radius:14px;padding:14px;margin-bottom:18px;">
+                    <div style="font-size:12px;color:var(--text-3);font-weight:800;text-transform:uppercase;">Varsayılan Teslimat Konumu</div>
+                    <div style="font-size:14px;font-weight:800;color:var(--text);margin-top:4px;" id="profile-addr-title">Evim (Moda)</div>
+                    <div style="font-size:12px;color:var(--primary);margin-top:2px;" id="profile-addr-coord">Izgara Konumu: (18, 14)</div>
+                </div>
+                <div style="background:var(--surface-2);border-radius:14px;padding:14px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;">
+                    <div>
+                        <div style="font-size:13px;font-weight:800;color:var(--text);">GustoCüzdan Bakiyesi</div>
+                        <div style="font-size:12px;color:var(--text-3);">Her teslimat değerlendirmesinde +25 puan</div>
+                    </div>
+                    <span style="font-size:17px;font-weight:900;color:var(--success);" id="acc-wallet-display">145 Puan (14.50 ₺)</span>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%;padding:14px;">
+                    <i class="fa-solid fa-floppy-disk"></i> Değişiklikleri Kaydet
+                </button>
+            </form>
+        </div>
+        
+        <!-- Tab 2: Siparişlerim -->
+        <div id="acc-tab-orders" style="display:none;">
+            <div id="acc-orders-list"></div>
+        </div>
+        
+        <!-- Tab 3: Kuponlarım -->
+        <div id="acc-tab-coupons" style="display:none;">
+            <div id="acc-coupons-list"></div>
+        </div>
+        
+        <!-- Tab 4: Favorilerim -->
+        <div id="acc-tab-favs" style="display:none;">
+            <div id="acc-favs-list"></div>
+        </div>
+    </div>
+</div>
+
+<!-- 7. Sipariş Fişi / Fatura Modalı -->
+<div class="modal-overlay" id="receipt-overlay">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeReceiptModal()"><i class="fa-solid fa-xmark"></i></button>
+        <div id="receipt-body"></div>
+    </div>
+</div>
+
+<!-- 8. Rol Seçici & Giriş/Kayıt Modalı -->
+<div class="modal-overlay" id="login-overlay">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeLogin()"><i class="fa-solid fa-xmark"></i></button>
+        <div style="text-align:center;margin-bottom:20px;">
+            <div class="brand-logo" style="margin:0 auto 12px auto;width:52px;height:52px;font-size:24px;"><i class="fa-solid fa-utensils"></i></div>
+            <h2 style="font-size:22px;font-weight:900;color:var(--text);">GustoGo Kullanıcı & Rol Merkezi</h2>
+            <p style="font-size:13px;color:var(--text-2);margin-top:4px;">Panel geçişi yapabilir veya yeni müşteri hesabı açabilirsiniz</p>
+        </div>
+        
+        <div class="modal-tabs">
+            <button class="modal-tab-btn active" id="tab-btn-roles" onclick="switchLoginTab('roles')"><i class="fa-solid fa-users"></i> Hızlı Rol Geçişi</button>
+            <button class="modal-tab-btn" id="tab-btn-auth" onclick="switchLoginTab('auth')"><i class="fa-solid fa-user-lock"></i> Giriş / Kayıt</button>
+        </div>
+        
+        <div id="login-tab-roles">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                <div class="choice-pill" onclick="loginAs('customer')">
+                    <div>
+                        <div style="font-size:14px;font-weight:800;color:var(--text);"><i class="fa-solid fa-bag-shopping" style="color:var(--primary);margin-right:6px;"></i> Müşteri Paneli</div>
+                        <div style="font-size:11.5px;color:var(--text-3);margin-top:2px;">Sipariş ver, 2D takip et</div>
+                    </div>
+                </div>
+                <div class="choice-pill" onclick="loginAs('restaurant')">
+                    <div>
+                        <div style="font-size:14px;font-weight:800;color:var(--text);"><i class="fa-solid fa-kitchen-set" style="color:var(--yellow);margin-right:6px;"></i> Satıcı / Mutfak</div>
+                        <div style="font-size:11.5px;color:var(--text-3);margin-top:2px;">Mutfak kuyruğu & stok</div>
+                    </div>
+                </div>
+                <div class="choice-pill" onclick="loginAs('courier')">
+                    <div>
+                        <div style="font-size:14px;font-weight:800;color:var(--text);"><i class="fa-solid fa-motorcycle" style="color:var(--blue);margin-right:6px;"></i> Kurye Paneli</div>
+                        <div style="font-size:11.5px;color:var(--text-3);margin-top:2px;">Teslimat görevleri & ciro</div>
+                    </div>
+                </div>
+                <div class="choice-pill" onclick="loginAs('admin')">
+                    <div>
+                        <div style="font-size:14px;font-weight:800;color:var(--text);"><i class="fa-solid fa-shield-halved" style="color:var(--purple);margin-right:6px;"></i> Sistem Yöneticisi</div>
+                        <div style="font-size:11.5px;color:var(--text-3);margin-top:2px;">Filo & Audit günlüğü</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="login-tab-auth" style="display:none;">
+            <div style="display:flex;gap:10px;margin-bottom:16px;">
+                <button class="btn btn-outline" style="flex:1;" id="auth-sub-login" onclick="showAuthMode('login')">Mevcut Hesapla Giriş</button>
+                <button class="btn btn-outline" style="flex:1;" id="auth-sub-register" onclick="showAuthMode('register')">Yeni Kayıt Ol</button>
+            </div>
+            
+            <form id="form-login" onsubmit="handleUserLogin(event)">
+                <div class="form-group">
+                    <label class="form-label">Kullanıcı Adı veya Telefon</label>
+                    <input type="text" class="form-input" id="login-username" placeholder="Örn: ahmet_yilmaz veya 05551112233" required value="Ahmet Yılmaz">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Şifre</label>
+                    <input type="password" class="form-input" placeholder="••••••••" required value="123456">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%;padding:14px;margin-top:8px;">
+                    <i class="fa-solid fa-right-to-bracket"></i> Hesabıma Giriş Yap
+                </button>
+            </form>
+            
+            <form id="form-register" style="display:none;" onsubmit="handleUserRegister(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Ad Soyad</label>
+                        <input type="text" class="form-input" id="reg-fullname" placeholder="Örn: Selin Demir" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Kullanıcı Adı</label>
+                        <input type="text" class="form-input" id="reg-username" placeholder="Örn: selin_demir" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Telefon Numarası</label>
+                        <input type="tel" class="form-input" id="reg-phone" placeholder="05XX XXX XX XX" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Şifre Belirleyin</label>
+                        <input type="password" class="form-input" placeholder="••••••••" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Teslimat Adres Başlığı</label>
+                    <input type="text" class="form-input" id="reg-addr-title" placeholder="Örn: Evim (Kadıköy)" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Izgara X Koordinatı (0–35)</label>
+                        <input type="number" class="form-input" id="reg-x" value="18" min="0" max="35">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Izgara Y Koordinatı (0–35)</label>
+                        <input type="number" class="form-input" id="reg-y" value="14" min="0" max="35">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%;padding:14px;margin-top:8px;">
+                    <i class="fa-solid fa-user-check"></i> Kayıt Ol ve Giriş Yap
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ======================================================== -->
+<!-- MODAL: HOCANIN İSTEDİĞİ 3 ZORUNLU KANIT (RESMİ ŞARTNAME)   -->
+<!-- ======================================================== -->
+<div class="modal-backdrop" id="modal-proofs">
+    <div class="modal-box" style="max-width:820px;border-radius:24px;">
+        <div class="modal-header">
+            <div style="display:flex;align-items:center;gap:12px;">
+                <div style="width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg, var(--primary), #FF7140);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 4px 14px rgba(250,74,12,0.35);">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <div class="modal-title">9. Yemek Sipariş ve Kurye Takip — 3 Zorunlu Kanıt</div>
+                    <div style="font-size:12.5px;color:var(--text-3);margin-top:2px;">Resmi Değerlendirme Kriterleri & Sunum Doğrulama Merkezi</div>
+                </div>
+            </div>
+            <button class="modal-close" onclick="closeProofsModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <div style="background:linear-gradient(135deg, rgba(250, 74, 12, 0.1), rgba(139, 92, 246, 0.1));border:1.5px solid rgba(250, 74, 12, 0.3);border-radius:16px;padding:14px 20px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+            <div style="font-size:13px;color:var(--text);max-width:560px;">
+                <strong>📋 Resmi Şartname Gereksinimi:</strong> Hocanın notlandırma tablosunda sunumda canlı kanıtlanmasını şart koştuğu 3 çekirdek özelliği tek tıkla test edebilirsiniz.
+            </div>
+            <button class="btn btn-primary" onclick="runAllProofs()" style="padding:10px 18px;font-size:13px;border-radius:25px;font-weight:800;">
+                <i class="fa-solid fa-play"></i> Tüm Kanıtları Çalıştır
+            </button>
+        </div>
+
+        <!-- Kanıt 1 -->
+        <div class="card" style="margin-bottom:16px;border:1.5px solid var(--border-color);padding:20px;border-radius:18px;background:var(--surface);">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                <div style="font-size:15px;font-weight:800;color:var(--text);display:flex;align-items:center;gap:8px;">
+                    <span style="background:rgba(239,68,68,0.15);color:#EF4444;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:900;">1. KANIT</span>
+                    Geçersiz Durum Geçişinin Reddi
+                </div>
+                <span class="badge" id="proof1-badge" style="background:var(--surface-3);color:var(--text-2);padding:4px 10px;border-radius:8px;font-size:11.5px;font-weight:700;">Henüz Test Edilmedi</span>
+            </div>
+            <p style="font-size:13px;color:var(--text-2);margin-bottom:12px;line-height:1.6;">
+                <strong>Çekirdek Problem Kuralı:</strong> Sipariş durum makinesinde (State Pattern) <code>alındı ➔ hazırlanıyor ➔ hazır ➔ yolda ➔ teslim edildi</code> sırası zorunludur. "Yolda" olan bir sipariş geriye "hazırlanıyor"a veya "iptal"e <u>asla dönemez</u>; sistem bunu anında reddetmelidir.
+            </p>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                <button class="btn btn-outline" style="border-color:#EF4444;color:#EF4444;font-size:13px;" onclick="testProof1()">
+                    <i class="fa-solid fa-ban"></i> Test Et: 'yolda' ➔ 'hazırlanıyor' Geçişini Dene
+                </button>
+                <div id="proof1-result" style="font-size:12.5px;color:var(--text-3);flex:1;min-width:280px;"></div>
+            </div>
+        </div>
+
+        <!-- Kanıt 2 -->
+        <div class="card" style="margin-bottom:16px;border:1.5px solid var(--border-color);padding:20px;border-radius:18px;background:var(--surface);">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                <div style="font-size:15px;font-weight:800;color:var(--text);display:flex;align-items:center;gap:8px;">
+                    <span style="background:rgba(59,130,246,0.15);color:#3B82F6;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:900;">2. KANIT</span>
+                    İki Kurye Arasında Doğru Seçimi Gösteren Birim Testi
+                </div>
+                <span class="badge" id="proof2-badge" style="background:var(--surface-3);color:var(--text-2);padding:4px 10px;border-radius:8px;font-size:11.5px;font-weight:700;">Henüz Test Edilmedi</span>
+            </div>
+            <p style="font-size:13px;color:var(--text-2);margin-bottom:12px;line-height:1.6;">
+                <strong>Algoritma Kuralı:</strong> Kurye atama formülü: <code>Puan = Haversine Mesafesi (km) + 2 × Aktif Sipariş İş Yükü</code>. Restoran: <strong>Moda Kebap (40.9850 N, 29.0280 E)</strong>
+            </p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+                <div style="background:var(--surface-2);padding:14px;border-radius:14px;border:1.5px solid var(--border-color);transition:all 0.3s;" id="courier-card-1">
+                    <div style="font-weight:800;font-size:13.5px;color:var(--text);">🏍️ Kurye 1: Ali Kaya (Rıhtım)</div>
+                    <div style="font-size:12px;color:var(--text-3);margin-top:4px;">Mesafe (Haversine): <strong>0.71 km</strong> (Daha yakın)</div>
+                    <div style="font-size:12px;color:#EF4444;font-weight:800;margin-top:2px;">Aktif İş Yükü: 2 sipariş (Meşgul)</div>
+                    <div style="font-size:12.5px;color:var(--text);font-weight:800;margin-top:6px;background:rgba(239,68,68,0.1);padding:4px 8px;border-radius:6px;">
+                        Skor: 0.71 + (2 × 2) = <strong>4.71</strong>
+                    </div>
+                </div>
+                <div style="background:var(--surface-2);padding:14px;border-radius:14px;border:1.5px solid var(--border-color);transition:all 0.3s;" id="courier-card-2">
+                    <div style="font-weight:800;font-size:13.5px;color:var(--text);">🏍️ Kurye 2: Veli Demir (Fenerbahçe)</div>
+                    <div style="font-size:12px;color:var(--text-3);margin-top:4px;">Mesafe (Haversine): <strong>1.26 km</strong> (Biraz daha uzak)</div>
+                    <div style="font-size:12px;color:#10B981;font-weight:800;margin-top:2px;">Aktif İş Yükü: 0 sipariş (Müsait)</div>
+                    <div style="font-size:12.5px;color:var(--text);font-weight:800;margin-top:6px;background:rgba(16,185,129,0.1);padding:4px 8px;border-radius:6px;">
+                        Skor: 1.26 + (2 × 0) = <strong>1.26 (KAZANAN!)</strong>
+                    </div>
+                </div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                <button class="btn btn-outline" style="border-color:#3B82F6;color:#3B82F6;font-size:13px;" onclick="testProof2()">
+                    <i class="fa-solid fa-calculator"></i> Test Et: Haversine & Puanlama Algoritmasını Çalıştır
+                </button>
+                <div id="proof2-result" style="font-size:12.5px;color:var(--text-3);flex:1;min-width:280px;"></div>
+            </div>
+        </div>
+
+        <!-- Kanıt 3 -->
+        <div class="card" style="border:1.5px solid var(--border-color);padding:20px;border-radius:18px;background:var(--surface);">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                <div style="font-size:15px;font-weight:800;color:var(--text);display:flex;align-items:center;gap:8px;">
+                    <span style="background:rgba(16,185,129,0.15);color:#10B981;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:900;">3. KANIT</span>
+                    Müşteri Panelinin Sayfa Yenilemeden Güncellenmesi (AJAX)
+                </div>
+                <span class="badge" id="proof3-badge" style="background:var(--surface-3);color:var(--text-2);padding:4px 10px;border-radius:8px;font-size:11.5px;font-weight:700;">Henüz Test Edilmedi</span>
+            </div>
+            <p style="font-size:13px;color:var(--text-2);margin-bottom:12px;line-height:1.6;">
+                <strong>Şartname Kuralı:</strong> Restoran siparişi onaylayıp mutfağa aldığında müşteri paneli sayfayı F5 yapmadan, arka plandaki reaktif AJAX senkronizasyonu ile anında güncellenmelidir.
+            </p>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                <button class="btn btn-outline" style="border-color:#10B981;color:#10B981;font-size:13px;" onclick="testProof3()">
+                    <i class="fa-solid fa-arrows-rotate"></i> Test Et: Mutfakta 'Hazırlanıyor' Yap (Canlı AJAX İzle)
+                </button>
+                <div id="proof3-result" style="font-size:12.5px;color:var(--text-3);flex:1;min-width:280px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- Modular Scripts -->
+<script src="js/data.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/map.js"></script>
+<script src="js/state.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>

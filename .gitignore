@@ -1,0 +1,6 @@
+vendor/
+.env
+.DS_Store
+storage/*.log
+storage/cache/*
+database/*.sqlite

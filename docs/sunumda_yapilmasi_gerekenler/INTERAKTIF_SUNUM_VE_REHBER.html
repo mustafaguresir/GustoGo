@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GustoGo — Sunum ve Mimari Rehberi (7 Dakika Master Plan)</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Mermaid.js for Diagrams -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            themeVariables: {
+                darkMode: true,
+                background: '#121620',
+                primaryColor: '#FA4A0C',
+                primaryTextColor: '#FFFFFF',
+                primaryBorderColor: '#FA4A0C',
+                lineColor: '#60A5FA',
+                secondaryColor: '#1E293B',
+                tertiaryColor: '#0F172A'
+            }
+        });
+    </script>
+
+    <style>
+        :root[data-theme="dark"] {
+            --bg: #0A0D14;
+            --surface: #121622;
+            --surface-2: #1A2030;
+            --surface-3: #242C42;
+            --border: #28334E;
+            --border-highlight: #FA4A0C;
+            --text: #F3F6FC;
+            --text-secondary: #94A3B8;
+            --text-muted: #64748B;
+            --primary: #FA4A0C;
+            --primary-glow: rgba(250, 74, 12, 0.35);
+            --success: #10B981;
+            --warning: #F59E0B;
+            --blue: #3B82F6;
+            --purple: #8B5CF6;
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        :root[data-theme="light"] {
+            --bg: #F8FAFC;
+            --surface: #FFFFFF;
+            --surface-2: #F1F5F9;
+            --surface-3: #E2E8F0;
+            --border: #CBD5E1;
+            --border-highlight: #FA4A0C;
+            --text: #0F172A;
+            --text-secondary: #475569;
+            --text-muted: #94A3B8;
+            --primary: #FA4A0C;
+            --primary-glow: rgba(250, 74, 12, 0.2);
+            --success: #10B981;
+            --warning: #D97706;
+            --blue: #2563EB;
+            --purple: #7C3AED;
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding-bottom: 80px;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* Top Header */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(18, 22, 34, 0.95);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--border);
+            padding: 14px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 900;
+            font-size: 20px;
+        }
+
+        .brand-badge {
+            background: linear-gradient(135deg, var(--primary), #FF7140);
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            box-shadow: 0 4px 15px var(--primary-glow);
+        }
+
+        .header-timer {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: var(--surface-2);
+            padding: 6px 18px;
+            border-radius: 30px;
+            border: 1.5px solid var(--border);
+        }
+
+        .timer-display {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .timer-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .timer-btn:hover { opacity: 0.9; transform: scale(1.05); }
+
+        .theme-toggle {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        /* Container & Tabs */
+        .container {
+            max-width: 1340px;
+            margin: 28px auto;
+            padding: 0 24px;
+        }
+
+        .hero-banner {
+            background: linear-gradient(135deg, rgba(250,74,12,0.15), rgba(139,92,246,0.15)), var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: 20px;
+            padding: 28px 32px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .hero-title { font-size: 28px; font-weight: 900; }
+        .hero-title span { color: var(--primary); }
+        .hero-sub { color: var(--text-secondary); font-size: 14.5px; margin-top: 4px; }
+
+        .tab-nav {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 12px;
+            margin-bottom: 28px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab-btn {
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            color: var(--text-secondary);
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover {
+            color: var(--text);
+            border-color: var(--primary);
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+            box-shadow: 0 4px 18px var(--primary-glow);
+        }
+
+        .tab-content { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .tab-content.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Card System */
+        .card {
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: 18px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-badge {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Grid */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+
+        @media (max-width: 992px) {
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+        }
+
+        /* Speaker Card */
+        .speaker-card {
+            background: var(--surface-2);
+            border: 1.5px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .speaker-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: var(--primary);
+        }
+        .speaker-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .speaker-name { font-size: 16px; font-weight: 800; color: var(--text); }
+        .speaker-time {
+            background: rgba(250, 74, 12, 0.15);
+            color: var(--primary);
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 800;
+        }
+        .speaker-topics {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            margin-bottom: 14px;
+        }
+        .speech-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 13.5px;
+            line-height: 1.7;
+            color: var(--text);
+            position: relative;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+        .copy-btn:hover { color: var(--primary); }
+
+        /* Q&A Accordion */
+        .qa-item {
+            background: var(--surface-2);
+            border: 1.5px solid var(--border);
+            border-radius: 14px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+        .qa-header {
+            padding: 16px 20px;
+            font-weight: 700;
+            font-size: 14.5px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+        .qa-header:hover { color: var(--primary); }
+        .qa-body {
+            padding: 0 20px 18px 20px;
+            font-size: 13.5px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            display: none;
+            border-top: 1px solid var(--border);
+            padding-top: 14px;
+        }
+        .qa-item.open .qa-body { display: block; }
+        .qa-item.open { border-color: var(--primary); }
+
+        /* Wireframe Gallery */
+        .wf-card {
+            background: var(--surface-2);
+            border: 1.5px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.25s;
+            cursor: pointer;
+        }
+        .wf-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.3);
+        }
+        .wf-img-wrap {
+            height: 220px;
+            background: var(--surface-3);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .wf-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #fff;
+            padding: 8px;
+        }
+        .wf-body { padding: 16px; }
+        .wf-title { font-size: 15px; font-weight: 800; margin-bottom: 4px; color: var(--text); }
+        .wf-desc { font-size: 12.5px; color: var(--text-secondary); line-height: 1.5; }
+
+        /* Checklist */
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            padding: 14px 18px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+        .checklist-item input[type="checkbox"] {
+            margin-top: 4px;
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+        .checklist-label { font-size: 13.5px; font-weight: 600; }
+        .checklist-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+        /* Modal Preview */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-content {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            max-width: 1000px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            padding: 24px;
+        }
+        .modal-close {
+            position: absolute;
+            top: 16px; right: 16px;
+            background: var(--surface-2);
+            border: none;
+            color: var(--text);
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        /* Mermaid Box */
+        .mermaid-box {
+            background: #0f1420;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            overflow-x: auto;
+            margin-bottom: 18px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navigation & Timer -->
+    <header>
+        <a href="#" class="brand">
+            <div class="brand-badge"><i class="fa-solid fa-utensils"></i></div>
+            <span>GustoGo <em>Sunum & Mimari Rehberi</em></span>
+        </a>
+
+        <!-- Live Presentation Stopwatch -->
+        <div class="header-timer">
+            <i class="fa-solid fa-stopwatch" style="color:var(--primary);"></i>
+            <span class="timer-display" id="timer-text">00:00</span>
+            <button class="timer-btn" id="timer-toggle-btn" onclick="toggleTimer()">Başlat</button>
+            <button class="timer-btn" style="background:var(--surface-3);color:var(--text);" onclick="resetTimer()">Sıfırla</button>
+        </div>
+
+        <button class="theme-toggle" onclick="toggleTheme()" title="Açık/Koyu Tema">
+            <i class="fa-solid fa-sun" id="theme-icon"></i>
+        </button>
+    </header>
+
+    <div class="container">
+        
+        <!-- Hero Banner -->
+        <div class="hero-banner">
+            <div>
+                <h1 class="hero-title">PHP Programlama — <span>Tasarım ve Mimari Sunumu</span></h1>
+                <p class="hero-sub">7 Dakikalık Akademik Sunum Planı, 4 Kişilik Konuşma Metinleri, Tüm UML Diyagramları ve Ekran Taslakları</p>
+            </div>
+            <div style="display:flex;gap:12px;">
+                <div style="background:var(--surface-2);border:1px solid var(--border);padding:10px 18px;border-radius:14px;text-align:center;">
+                    <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;">Toplam Süre</div>
+                    <div style="font-size:18px;font-weight:900;color:var(--primary);">7 Dakika</div>
+                </div>
+                <div style="background:var(--surface-2);border:1px solid var(--border);padding:10px 18px;border-radius:14px;text-align:center;">
+                    <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;">Grup Üyesi</div>
+                    <div style="font-size:18px;font-weight:900;color:var(--blue);">4 Kişi</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="switchTab('tab-rubric')"><i class="fa-solid fa-stamp"></i> 1. Resmi Şartname & 3 Kanıt</button>
+            <button class="tab-btn" onclick="switchTab('tab-checklist')"><i class="fa-solid fa-list-check"></i> 2. Hocanın İstekleri</button>
+            <button class="tab-btn" onclick="switchTab('tab-speeches')"><i class="fa-solid fa-microphone-lines"></i> 3. Konuşma Metinleri (7 Dk)</button>
+            <button class="tab-btn" onclick="switchTab('tab-diagrams')"><i class="fa-solid fa-diagram-project"></i> 4. UML & Mimari Diyagramlar</button>
+            <button class="tab-btn" onclick="switchTab('tab-wireframes')"><i class="fa-solid fa-desktop"></i> 5. 5 Ekran Taslağı (Wireframes)</button>
+            <button class="tab-btn" onclick="switchTab('tab-qa')"><i class="fa-solid fa-circle-question"></i> 6. Hocanın 10 Tuzak Sorusu</button>
+            <button class="tab-btn" onclick="switchTab('tab-risks')"><i class="fa-solid fa-shield-halved"></i> 7. Risk Matrisi & GitHub</button>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 1: RESMİ ŞARTNAME VE 3 ZORUNLU KANIT   -->
+        <!-- ========================================== -->
+        <div id="tab-rubric" class="tab-content active">
+            
+            <!-- Resmi Şartname Tablosu -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fa-solid fa-file-contract" style="color:var(--primary);"></i> 
+                        9. Yemek Sipariş ve Kurye Takip — Resmi Değerlendirme Tablosu
+                    </div>
+                    <span class="card-badge" style="background:linear-gradient(135deg,var(--primary),#FF7140);color:#fff;">Zorluk: 4 / 5</span>
+                </div>
+
+                <p style="font-size:13.5px;color:var(--text-secondary);margin-bottom:16px;">
+                    Dersin resmi şartnamesinde yer alan tüm maddeler ve GustoGo projemizdeki eksiksiz mimari karşılıkları aşağıda özetlenmiştir:
+                </p>
+
+                <div style="overflow-x:auto;">
+                    <table style="width:100%;border-collapse:collapse;border-radius:14px;overflow:hidden;border:1px solid var(--border);">
+                        <thead>
+                            <tr style="background:var(--surface-2);border-bottom:2px solid var(--border);text-align:left;">
+                                <th style="padding:14px 18px;font-size:13px;font-weight:800;color:var(--primary);width:200px;">Alan</th>
+                                <th style="padding:14px 18px;font-size:13px;font-weight:800;color:var(--text);">Resmi Şartname Kriteri</th>
+                                <th style="padding:14px 18px;font-size:13px;font-weight:800;color:var(--success);width:260px;">Projedeki Karşılığı</th>
+                            </tr>
+                        </thead>
+                        <tbody style="font-size:13px;">
+                            <tr style="border-bottom:1px solid var(--border);">
+                                <td style="padding:12px 18px;font-weight:800;color:var(--text);">Zorluk</td>
+                                <td style="padding:12px 18px;color:var(--text-secondary);">4 / 5</td>
+                                <td style="padding:12px 18px;color:var(--success);font-weight:700;"><i class="fa-solid fa-check"></i> Eksiksiz Karşılandı</td>
+                            </tr>
+                            <tr style="border-bottom:1px solid var(--border);background:var(--surface-2);">
+                                <td style="padding:12px 18px;font-weight:800;color:var(--text);">Yapılacaklar</td>
+                                <td style="padding:12px 18px;color:var(--text-secondary);">Müşteri restoran menüsünden sipariş verir; restoran siparişi hazırlar; kurye atanır ve teslim eder. Üç rolün de kendi paneli vardır.</td>
+                                <td style="padding:12px 18px;color:var(--success);font-weight:700;"><i class="fa-solid fa-check"></i> 4 Rol Paneli Aktif (Müşteri, Restoran, Kurye, Admin)</td>
+                            </tr>
+                            <tr style="border-bottom:1px solid var(--border);">
+                                <td style="padding:12px 18px;font-weight:800;color:var(--text);">Çekirdek Problem</td>
+                                <td style="padding:12px 18px;color:var(--text-secondary);">
+                                    <strong>Sipariş durum makinesi:</strong> (alındı ➔ hazırlanıyor ➔ hazır ➔ yolda ➔ teslim edildi; iptal) ve geçersiz geçişlerin engellenmesi (yolda olan sipariş "hazırlanıyor"a dönemez).<br>
+                                    <strong>Kurye atama algoritması:</strong> müsait kuryeler arasından siparişe mesafe ve mevcut iş yüküne göre en uygun olanın seçilmesi.
+                                </td>
+                                <td style="padding:12px 18px;color:var(--success);font-weight:700;">
+                                    <i class="fa-solid fa-check"></i> <code>OrderStateMachineService</code> (State Pattern)<br>
+                                    <i class="fa-solid fa-check"></i> <code>ScoreBasedAssignmentStrategy</code>
+                                </td>
+                            </tr>
+                            <tr style="border-bottom:1px solid var(--border);background:var(--surface-2);">
+                                <td style="padding:12px 18px;font-weight:800;color:var(--text);">Zorunlu Özellikler</td>
+                                <td style="padding:12px 18px;color:var(--text-secondary);">
+                                    3 rol (müşteri, restoran, kurye) ve yönetici; en az 3 restoran ve toplam 10 ürün; sepet; her rolün paneli durum değişince otomatik yenilenir (AJAX); tahmini teslim süresi; sipariş geçmişi; restoranın günlük sipariş raporu.
+                                </td>
+                                <td style="padding:12px 18px;color:var(--success);font-weight:700;">
+                                    <i class="fa-solid fa-check"></i> 7 Restoran, 27 Menü Öğesi<br>
+                                    <i class="fa-solid fa-check"></i> AJAX Senkronizasyonu & Günlük Rapor
+                                </td>
+                            </tr>
+                            <tr style="border-bottom:1px solid var(--border);">
+                                <td style="padding:12px 18px;font-weight:800;color:var(--text);">PHP Özellikleri</td>
+                                <td style="padding:12px 18px;color:var(--text-secondary);">
+                                    State deseni, PHP 8.1 enum (sipariş durumu), mesafe hesabı (Haversine), AJAX, PDO ve transaction, JOIN, rol bazlı yetkilendirme.
+                                </td>
+                                <td style="padding:12px 18px;color:var(--success);font-weight:700;">
+                                    <i class="fa-solid fa-check"></i> <code>HaversineDistanceService</code><br>
+                                    <i class="fa-solid fa-check"></i> <code>saveWithTransaction()</code><br>
+                                    <i class="fa-solid fa-check"></i> 5 Tablolu SQL JOIN & RBAC
+                                </td>
+                            </tr>
+                            <tr style="border-bottom:1px solid var(--border);background:var(--surface-2);">
+                                <td style="padding:12px 18px;font-weight:800;color:var(--text);">Asgari Tablolar</td>
+                                <td style="padding:12px 18px;color:var(--text-secondary);">
+                                    <code>users</code>, <code>restaurants</code>, <code>menu_items</code>, <code>orders</code>, <code>order_items</code>, <code>couriers</code>, <code>order_status_log</code> (en az 6 tablo)
+                                </td>
+                                <td style="padding:12px 18px;color:var(--success);font-weight:700;"><i class="fa-solid fa-check"></i> 7 Tablolu 3NF SQLite Şeması</td>
+                            </tr>
+                            <tr style="border-bottom:1px solid var(--border);">
+                                <td style="padding:12px 18px;font-weight:800;color:var(--text);">Kapsam Sınırı</td>
+                                <td style="padding:12px 18px;color:var(--text-secondary);">
+                                    Harita servisi, canlı konum takibi ve ödeme yok; konumlar sabit koordinat veya mahalle olarak tutulur.
+                                </td>
+                                <td style="padding:12px 18px;color:var(--success);font-weight:700;"><i class="fa-solid fa-check"></i> Sabit Mahalleler (Kadıköy, Beşiktaş vb.) & 2D Şematik İzgarası</td>
+                            </tr>
+                            <tr style="background:rgba(250,74,12,0.08);">
+                                <td style="padding:14px 18px;font-weight:900;color:var(--primary);">Sunumda Kanıt</td>
+                                <td style="padding:14px 18px;color:var(--text);font-weight:700;">
+                                    1. Geçersiz durum geçişinin reddi;<br>
+                                    2. İki kurye arasında doğru seçimi gösteren birim testi;<br>
+                                    3. Müşteri panelinin sayfa yenilemeden güncellenmesi.
+                                </td>
+                                <td style="padding:14px 18px;color:var(--primary);font-weight:900;">
+                                    <i class="fa-solid fa-certificate"></i> Canlı Test Merkezi (Aşağıda)
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- CANLI SUNUM KANITLARI TEST MERKEZİ -->
+            <div class="card" style="border:2px solid var(--primary);box-shadow:0 10px 30px rgba(250,74,12,0.15);">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fa-solid fa-vial-circle-check" style="color:var(--primary);"></i> 
+                        Hocanın Sunumda İstediği 3 Zorunlu Kanıt (Canlı Test Paneli)
+                    </div>
+                    <span class="card-badge" style="background:var(--success);color:#fff;">Canlı Doğrulama</span>
+                </div>
+
+                <p style="font-size:13px;color:var(--text-secondary);margin-bottom:20px;">
+                    Sunum sırasında öğretim üyesine canlı olarak kanıtlamak için aşağıdaki butonları tıklayarak doğrudan tarayıcı üzerinden sonuçları görüntüleyebilirsiniz:
+                </p>
+
+                <div class="grid-3" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:18px;">
+                    
+                    <!-- Kanıt 1 -->
+                    <div style="background:var(--surface-2);border:1.5px solid var(--border);border-radius:16px;padding:18px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                            <span style="background:rgba(239,68,68,0.15);color:#EF4444;font-size:11.5px;font-weight:900;padding:3px 8px;border-radius:6px;">1. KANIT</span>
+                            <span id="pres-p1-badge" style="font-size:11px;color:var(--text-muted);font-weight:700;">Hazır</span>
+                        </div>
+                        <div style="font-size:14.5px;font-weight:800;margin-bottom:6px;color:var(--text);">Geçersiz Durum Geçişi Reddi</div>
+                        <p style="font-size:12px;color:var(--text-secondary);margin-bottom:14px;line-height:1.5;">
+                            'Yolda' olan bir sipariş geriye 'hazırlanıyor'a çekilmek istendiğinde sistemin HTTP 400 DomainException fırlatıp işlemi reddettiğini kanıtlar.
+                        </p>
+                        <button class="timer-btn" style="width:100%;background:#EF4444;margin-bottom:10px;" onclick="runPresentationProof1()">
+                            <i class="fa-solid fa-ban"></i> Geçersiz Geçişi Test Et
+                        </button>
+                        <div id="pres-p1-box" style="display:none;background:rgba(239,68,68,0.1);border-left:3px solid #EF4444;padding:10px;border-radius:8px;font-size:11.5px;font-family:monospace;color:var(--text);"></div>
+                    </div>
+
+                    <!-- Kanıt 2 -->
+                    <div style="background:var(--surface-2);border:1.5px solid var(--border);border-radius:16px;padding:18px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                            <span style="background:rgba(59,130,246,0.15);color:#3B82F6;font-size:11.5px;font-weight:900;padding:3px 8px;border-radius:6px;">2. KANIT</span>
+                            <span id="pres-p2-badge" style="font-size:11px;color:var(--text-muted);font-weight:700;">Hazır</span>
+                        </div>
+                        <div style="font-size:14.5px;font-weight:800;margin-bottom:6px;color:var(--text);">İki Kurye Arasında Seçim Testi</div>
+                        <p style="font-size:12px;color:var(--text-secondary);margin-bottom:14px;line-height:1.5;">
+                            Kurye Ali (0.71 km, 2 aktif sipariş, Skor: 4.71) ile Kurye Veli (1.26 km, 0 aktif sipariş, Skor: 1.26) arasında Veli'nin seçildiğini kanıtlar.
+                        </p>
+                        <button class="timer-btn" style="width:100%;background:#3B82F6;margin-bottom:10px;" onclick="runPresentationProof2()">
+                            <i class="fa-solid fa-calculator"></i> Haversine Atamasını Test Et
+                        </button>
+                        <div id="pres-p2-box" style="display:none;background:rgba(16,185,129,0.1);border-left:3px solid #10B981;padding:10px;border-radius:8px;font-size:11.5px;color:var(--text);"></div>
+                    </div>
+
+                    <!-- Kanıt 3 -->
+                    <div style="background:var(--surface-2);border:1.5px solid var(--border);border-radius:16px;padding:18px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                            <span style="background:rgba(16,185,129,0.15);color:#10B981;font-size:11.5px;font-weight:900;padding:3px 8px;border-radius:6px;">3. KANIT</span>
+                            <span id="pres-p3-badge" style="font-size:11px;color:var(--text-muted);font-weight:700;">Hazır</span>
+                        </div>
+                        <div style="font-size:14.5px;font-weight:800;margin-bottom:6px;color:var(--text);">Müşteri Paneli AJAX Güncellemesi</div>
+                        <p style="font-size:12px;color:var(--text-secondary);margin-bottom:14px;line-height:1.5;">
+                            Mutfak siparişi onayladığında müşteri ekranının sayfayı F5 (yenileme) yapmadan arka planda reaktif olarak yenilendiğini kanıtlar.
+                        </p>
+                        <button class="timer-btn" style="width:100%;background:#10B981;margin-bottom:10px;" onclick="runPresentationProof3()">
+                            <i class="fa-solid fa-arrows-rotate"></i> AJAX Senkronizasyonunu Test Et
+                        </button>
+                        <div id="pres-p3-box" style="display:none;background:rgba(16,185,129,0.1);border-left:3px solid #10B981;padding:10px;border-radius:8px;font-size:11.5px;color:var(--text);"></div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 2: HOCANIN İSTEKLERİ KONTROL LİSTESİ -->
+        <!-- ========================================== -->
+        <div id="tab-checklist" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title"><i class="fa-solid fa-clipboard-check" style="color:var(--primary);"></i> Sunum Öncesi Zorunlu Kontrol Listesi</div>
+                    <span class="card-badge">Eksiksiz Tamamlanmalıdır</span>
+                </div>
+                
+                <div class="checklist-item">
+                    <input type="checkbox" checked id="c1">
+                    <div>
+                        <label class="checklist-label" for="c1">7 Dakikalık Katı Süre Sınırına Uyulması (4 Üye Eşit Dağılım)</label>
+                        <div class="checklist-sub">Proje Yöneticisi: 1.5 dk, Mimar: 2 dk, Veritabanı/Test: 2 dk, Arayüz/Doküman: 1.5 dk.</div>
+                    </div>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" checked id="c2">
+                    <div>
+                        <label class="checklist-label" for="c2">Katmanlı Mimari Şeması ve Katman Kuralları (Separation of Concerns)</label>
+                        <div class="checklist-sub">Controller asla SQL yazmaz, katman atlama yasaktır. Kontrol sorusu cevabı hazır olmalıdır.</div>
+                    </div>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" checked id="c3">
+                    <div>
+                        <label class="checklist-label" for="c3">En Az 12 Sınıf ve Arayüz İçeren Sınıf Diyagramı (Class Diagram)</label>
+                        <div class="checklist-sub">Sistemimizde Controller, Service, Repository, State, Strategy ve Model olmak üzere 18 sınıf bulunmaktadır.</div>
+                    </div>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" checked id="c4">
+                    <div>
+                        <label class="checklist-label" for="c4">Çekirdek Akış ve 2 Hata Dalı İçeren Sıralama Diyagramı (Sequence Diagram)</label>
+                        <div class="checklist-sub">Restoran 'Hazır' yaptı ➔ Kurye atandı akışı + Geçersiz geçiş hatası (HTTP 400) + Müsait kurye yok hatası (HTTP 409).</div>
+                    </div>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" checked id="c5">
+                    <div>
+                        <label class="checklist-label" for="c5">7 Tablolu ER Diyagramı ve 3NF Normalizasyon Analizi</label>
+                        <div class="checklist-sub">1NF atomik sütunlar, 2NF tam fonksiyonel bağımlılık, 3NF geçişli bağımlılıkların kaldırılması.</div>
+                    </div>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" checked id="c6">
+                    <div>
+                        <label class="checklist-label" for="c6">State, Strategy ve Repository Tasarım Desenlerinin Gerekçeleri</label>
+                        <div class="checklist-sub">Neden if-else yazılmadı? Neden switch-case yerine State deseni seçildi? Alternatifler açıklandı mı?</div>
+                    </div>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" checked id="c7">
+                    <div>
+                        <label class="checklist-label" for="c7">5 Adet Ekran Taslağı (Wireframes) ve Sayfa Haritası (Page Map)</label>
+                        <div class="checklist-sub">Müşteri menü/sepet, canlı takip, mutfak paneli, kurye rotası, yönetici kontrol paneli PNG formatında hazır.</div>
+                    </div>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" checked id="c8">
+                    <div>
+                        <label class="checklist-label" for="c8">Risk Matrisi (En Az 6 Risk), GitHub Projects Backlog ve AI Günlüğü</label>
+                        <div class="checklist-sub">Race condition, yetkisiz durum ihlali, haksız yemek iptali ve yapay zekâ kullanım logu belgelendi.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 2: KONUŞMA METİNLERİ (7 DAKİKA)       -->
+        <!-- ========================================== -->
+        <div id="tab-speeches" class="tab-content">
+            <div class="grid-2">
+                
+                <!-- 1. ÜYE: MUSTAFA NURİ URAL -->
+                <div class="speaker-card">
+                    <div class="speaker-header">
+                        <div>
+                            <div class="speaker-name">1. Üye: Mustafa Nuri Ural</div>
+                            <div class="speaker-topics">Proje Yöneticisi • Vizyon, Problem, Roller & 3 Hikâye</div>
+                        </div>
+                        <div class="speaker-time">00:00 – 01:30 (1,5 Dk)</div>
+                    </div>
+                    <div class="speech-box">
+                        <button class="copy-btn" onclick="copyText('speech-1')">Kopyala</button>
+                        <p id="speech-1">"Sayın Hocam ve değerli arkadaşlar, merhabalar. Ben Mustafa Nuri Ural, GustoGo projesinin proje yöneticisiyim.<br><br>
+                        Bugün sizlere, katmanlı mimari ve modern tasarım desenleriyle geliştirdiğimiz <strong>Yemek Sipariş ve Akıllı Kurye Takip Sistemi</strong>mizi sunacağız.<br><br>
+                        <strong>Vizyonumuz:</strong> Sipariş sürecindeki gecikmeleri, sipariş iptallerindeki restoran zararlarını ve kuryeler arasındaki adaletsiz iş yükünü matematiksel ve mimari kurallarla çözmektir.<br><br>
+                        <strong>Çekirdek Problemimiz:</strong> Restoran siparişi hazırladığında; kuryenin mesafesi ile anlık iş yükünü harmanlayarak en optimum kuryeyi adil bir şekilde atamaktır. Şartname gereğince mesafeyi <strong>Haversine Formülü</strong> ile küresel koordinatlar üzerinden hesaplıyoruz. Kurye seçim kuralımız: <em>Puan = Haversine Mesafesi (km) + 2 × Aktif Sipariş İş Yükü</em>.<br><br>
+                        Sistemimizde 4 rol tanımladık: Müşteri, Restoran, Kurye ve Yönetici.<br><br>
+                        <strong>3 Ana Hikâyemiz:</strong> Müşteri siparişi verir (Alındı) ➔ Restoran mutfağa alır (Hazırlanıyor) — bu andan sonra iptal kesinlikle kilitlenir — ➔ Restoran 'Hazır' dediği an otomatik kurye atanır (Yolda) ➔ Kurye teslim eder (Teslim Edildi).<br><br>
+                        Şimdi mimari detayları aktarmak üzere sözü Yazılım Mimarımıza bırakıyorum."</p>
+                    </div>
+                </div>
+
+                <!-- 2. ÜYE: YAZILIM MİMARI -->
+                <div class="speaker-card">
+                    <div class="speaker-header">
+                        <div>
+                            <div class="speaker-name">2. Üye: Yazılım Mimarı</div>
+                            <div class="speaker-topics">Katmanlı Mimari, Kontrol Sorusu, 12+ Sınıf, State & Strategy</div>
+                        </div>
+                        <div class="speaker-time">01:30 – 03:30 (2,0 Dk)</div>
+                    </div>
+                    <div class="speech-box">
+                        <button class="copy-btn" onclick="copyText('speech-2')">Kopyala</button>
+                        <p id="speech-2">"Merhabalar Hocam, ben projenin Yazılım Mimarısı.<br><br>
+                        Sistemimiz katı kurallara bağlı <strong>Katmanlı Mimari (Layered Architecture)</strong> ile tasarlanmıştır: <code>index.php ➔ Router ➔ Controller ➔ Service ➔ Repository ➔ Model/Database</code>.<br><br>
+                        <strong>Katman Kurallarımız:</strong> Controller katmanı kesinlikle SQL sorgusu yazmaz ve hesaplama yapmaz; sadece isteği doğrular, servisi tetikler ve yanıt döner. Service katmanı algoritmaları ve durum makinesini barındırır. Repository veritabanını soyutlar.<br><br>
+                        <strong>Hocam, kılavuzdaki kritik kontrol sorusuna gelirsek:</strong> 'SQLite yerine MySQL'e geçersek hangi dosyalar değişir?' Yalnızca <code>src/Repository/</code> altındaki somut sınıflarımız değişir. Controller, Service ve State sınıflarımız arayüzlere bağımlı olduğu için mimarimizdeki tek bir satır iş kodu bile değişmez.<br><br>
+                        <strong>Neden State ve Strategy Desenleri?</strong><br>
+                        - <em>State Deseni:</em> Sipariş durum akışını ve 'hazırlanıyor'dan sonra iptal yasağını if-else spagettisi olmadan sınıflar düzeyinde kapsüller (Encapsulation).<br>
+                        - <em>Strategy Deseni:</em> Kurye puanlama formülünü arayüz arkasına alarak çalışma anında veya simülasyonda bağımsız değiştirebilmemizi sağlar.<br><br>
+                        Şimdi sıralama diyagramımızı ve veritabanı analizimizi aktarmak üzere sözü Veritabanı ve Test Sorumlumuza bırakıyorum."</p>
+                    </div>
+                </div>
+
+                <!-- 3. ÜYE: VERİTABANI VE TEST SORUMLUSU -->
+                <div class="speaker-card">
+                    <div class="speaker-header">
+                        <div>
+                            <div class="speaker-name">3. Üye: Veritabanı & Test Sorumlusu</div>
+                            <div class="speaker-topics">Sıralama Diyagramı (2 Hata Dalı), PDO Transaction, JOIN & 3 Kanıt</div>
+                        </div>
+                        <div class="speaker-time">03:30 – 05:30 (2,0 Dk)</div>
+                    </div>
+                    <div class="speech-box">
+                        <button class="copy-btn" onclick="copyText('speech-3')">Kopyala</button>
+                        <p id="speech-3">"Merhabalar Hocam, ben Veritabanı ve Test Sorumlusuyum.<br><br>
+                        <strong>Sıralama Diyagramımız:</strong> Restoran siparişi mutfakta 'Hazır' yaptığında çekirdek akış tetiklenir:<br>
+                        1. <code>OrderStateMachineService</code> durumun geçerliliğini denetler. Sırasız bir geçiş denenirse <strong>Hata Dalı 1</strong> çalışır ve HTTP 400 fırlatılır.<br>
+                        2. <code>CourierAssignmentService</code> müsait kuryeleri çeker. Eğer hiç boş kurye yoksa <strong>Hata Dalı 2</strong> tetiklenir ve sipariş bekleme kuyruğuna alınır.<br>
+                        3. Başarılı dalda: Haversine mesafesi ve iş yüküyle en optimum kurye seçilir, Koşullu UPDATE ile atomik olarak atanır.<br><br>
+                        <strong>Veritabanı, PDO Transaction ve Çoklu JOIN Analizimiz:</strong><br>
+                        - <em>7 İlişkisel Tablo (3NF):</em> <code>users</code>, <code>restaurants</code>, <code>menu_items</code>, <code>orders</code>, <code>order_items</code>, <code>couriers</code>, <code>order_status_log</code>.<br>
+                        - <em>PDO Transaction:</em> Sipariş, sipariş kalemleri ve denetim logu tek bir atomik transaction içinde kaydedilir.<br>
+                        - <em>SQL JOIN:</em> Sipariş detayları 5 tablo birleştirilerek tek sorguda çekilir.<br><br>
+                        <strong>HOCANIN İSTEDİĞİ 3 ZORUNLU KANITI CANLI OLARAK SUNUYORUZ:</strong><br>
+                        1. <em>Geçersiz Durum Geçişinin Reddi:</em> Yoldaki siparişin 'hazırlanıyor'a geri dönmesi DomainException ile anında reddedilmektedir.<br>
+                        2. <em>İki Kurye Arasında Doğru Seçim Birim Testi:</em> Yakın ama meşgul olan Ali Kaya (Puan: 4.71) yerine, uzak ama boşta olan Veli Demir (Puan: 1.26) birim testinde başarıyla seçilmektedir.<br>
+                        3. <em>Müşteri Panelinin Sayfa Yenilemeden Güncellenmesi:</em> Mutfak siparişi aldığında AJAX ile müşteri stepper'ı canlı olarak güncellenmektedir.<br><br>
+                        Sözü Arayüz ve Dokümantasyon Sorumlumuza bırakıyorum."</p>
+                    </div>
+                </div>
+
+                <!-- 4. ÜYE: ARAYÜZ VE DOKÜMANTASYON SORUMLUSU -->
+                <div class="speaker-card">
+                    <div class="speaker-header">
+                        <div>
+                            <div class="speaker-name">4. Üye: Arayüz & Dokümantasyon Sorumlusu</div>
+                            <div class="speaker-topics">5 Wireframe, Sayfa Haritası, Risk Matrisi, GitHub & AI Günlüğü</div>
+                        </div>
+                        <div class="speaker-time">05:30 – 07:00 (1,5 Dk)</div>
+                    </div>
+                    <div class="speech-box">
+                        <button class="copy-btn" onclick="copyText('speech-4')">Kopyala</button>
+                        <p id="speech-4">"Merhabalar Hocam, ben Arayüz ve Dokümantasyon Sorumlusuyum.<br><br>
+                        Sistemimiz için 4 role özel 5 temel ekran taslağı (wireframe) hazırladık:<br>
+                        1. <em>Müşteri Menü ve Sepet Ekranı:</em> Menü, sepet ve teslimat koordinat seçimi.<br>
+                        2. <em>Canlı Sipariş Takip Ekranı:</em> 5 aşamalı görsel durum çizgisi. 'Alındı'da iptal aktiftir; 'Hazırlanıyor'a geçince kilitlenir.<br>
+                        3. <em>Restoran Mutfak Paneli:</em> Şef için Hazırlanıyor/Hazır butonları ve günlük ciro özeti.<br>
+                        4. <em>Kurye Teslimat Paneli:</em> Atanan görev, Manhattan skor dökümü ve teslim onay butonları.<br>
+                        5. <em>Yönetici Paneli:</em> 30x30 şehir haritası, filo iş yükü ve order_status_log denetim tarihçesi.<br><br>
+                        <strong>Risk Matrisimiz:</strong> İki siparişin aynı anda aynı kuryeyi kapması riskini (Race Condition) veritabanında Koşullu UPDATE ve Transaction ile çözdük. Erken iptal riskini State deseniyle API seviyesinde engelledik.<br><br>
+                        Projemizi GitHub Projects Kanban panosu üzerinden yönettik. Yapay zekâyı ise mimari ihlalleri denetlemek ve 3NF normalizasyon kurallarını doğrulamak için danışman olarak kullandık.<br><br>
+                        Bizi dinlediğiniz için teşekkür ederiz. Sorularınızı yanıtlamaktan mutluluk duyarız."</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 3: UML VE MİMARİ DİYAGRAMLAR         -->
+        <!-- ========================================== -->
+        <div id="tab-diagrams" class="tab-content">
+            
+            <!-- 1. Katmanlı Mimari -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title"><i class="fa-solid fa-layer-group" style="color:var(--blue);"></i> 1. Katmanlı Mimari Akış Şeması</div>
+                    <span class="card-badge">Strict Layered Architecture</span>
+                </div>
+                <div class="mermaid-box">
+                    <pre class="mermaid">
+flowchart TD
+    Client(["🌐 İstemci (Müşteri / Restoran / Kurye / Admin Tarayıcısı)"])
+    
+    subgraph Layer1 ["1. İstemci & Giriş Katmanı"]
+        FC["public/index.php (Front Controller)"]
+        Router["Router Katmanı (Rota ve HTTP Metodu Eşleme)"]
+    end
+
+    subgraph Layer2 ["2. Denetleyici (Controller) Katmanı"]
+        OC["OrderController"]
+        RC["RestaurantController"]
+        CC["CourierController"]
+        AC["AuthController"]
+    end
+
+    subgraph Layer3 ["3. İş Mantığı ve Servis (Service) Katmanı"]
+        OSM["OrderStateMachineService (State Pattern)"]
+        CAS["CourierAssignmentService (Manhattan Algoritması)"]
+        REP["ReportService (Ciro ve İstatistikler)"]
+        Strat["ScoreBasedAssignmentStrategy (Strategy Pattern)"]
+    end
+
+    subgraph Layer4 ["4. Veri Erişim (Repository) Katmanı"]
+        ORI["OrderRepositoryInterface"]
+        SOR["SqliteOrderRepository (Koşullu UPDATE)"]
+        CRI["CourierRepositoryInterface"]
+        SCR["SqliteCourierRepository"]
+    end
+
+    subgraph Layer5 ["5. Veri Varlıkları ve Veritabanı (Model & DB)"]
+        Models["Modeller: Order, OrderItem, Courier, Restaurant, User"]
+        DB[("SQLite Veritabanı: database/app.sqlite (7 Tablo)")]
+    end
+
+    Client -->|HTTP GET / POST| FC
+    FC --> Router
+    Router --> OC & RC & CC & AC
+    OC & RC & CC --> OSM
+    OSM --> CAS
+    CAS --> Strat
+    OSM --> ORI
+    CAS --> CRI
+    ORI -.->|implements| SOR
+    CRI -.->|implements| SCR
+    SOR & SCR --> Models
+    SOR & SCR --> DB
+                    </pre>
+                </div>
+            </div>
+
+            <!-- 2. Sıralama Diyagramı -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title"><i class="fa-solid fa-arrow-down-1-9" style="color:var(--primary);"></i> 2. Sıralama Diyagramı (Sequence Diagram — Çekirdek Akış & 2 Hata Dalı)</div>
+                    <span class="card-badge">Kritik Akış</span>
+                </div>
+                <div class="mermaid-box">
+                    <pre class="mermaid">
+sequenceDiagram
+    autonumber
+    participant R as Restoran Şefi
+    participant C as RestaurantController
+    participant S as OrderStateMachineService
+    participant CS as CourierAssignmentService
+    participant CR as SqliteCourierRepository
+    participant OR as SqliteOrderRepository
+
+    R->>C: POST /orders/mark-ready (orderId: 1042)
+    C->>S: applyTransition(1042, OrderStatus::HAZIR)
+    S->>OR: findById(1042)
+    OR-->>S: Order (Mevcut Durum: HAZIRLANIYOR)
+    
+    S->>S: Durum geçişi geçerli mi? (HAZIRLANIYOR -> HAZIR)
+    alt Hata Dalı 1: Geçersiz Durum Geçişi
+        S-->>C: throw InvalidOrderTransitionException("Geçersiz aşama geçişi!")
+        C-->>R: 400 Bad Request
+    else Başarılı Adım: Geçerli Durum Geçişi
+        S->>CS: assignBestCourier(order)
+        CS->>CR: findAvailableCouriers()
+        CR-->>CS: array [Kurye1, Kurye2, Kurye3]
+        
+        alt Hata Dalı 2: Hiç Müsait Kurye Yoksa
+            CS-->>S: throw NoAvailableCourierException("Bölgede müsait kurye yok!")
+            S-->>C: 409 Conflict: "Sipariş hazır, kurye bekleniyor (Sırada)"
+            C-->>R: 200 OK + Uyarı: Kurye Bekleniyor
+        else Uygun Kurye Bulundu (Akıllı Atama)
+            CS->>CS: Puan = ManhattanMesafe + 2 * AktifSipariş hesapla
+            CS->>CS: En düşük puanlı Kurye Ali'yi seç (Puan: 6)
+            CS-->>S: Seçilen Kurye Ali (id: 5)
+            S->>OR: updateStatusConditional(1042, HAZIRLANIYOR, HAZIR)
+            S->>OR: assignCourier(1042, courierId: 5)
+            OR-->>S: Koşullu UPDATE Başarılı
+            S->>CR: incrementActiveOrders(5)
+            S-->>C: Sipariş Hazırlandı ve Kurye Ali Görevlendirildi
+            C-->>R: 200 OK (JSON {status: "HAZIR", courier: "Ali"})
+        end
+    end
+                    </pre>
+                </div>
+            </div>
+
+            <!-- 3. ER Diyagramı -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title"><i class="fa-solid fa-database" style="color:var(--success);"></i> 3. ER Diyagramı (Entity-Relationship — 7 Tablo & 3NF)</div>
+                    <span class="card-badge">7 Tablo Tam İlişkisel</span>
+                </div>
+                <div class="mermaid-box">
+                    <pre class="mermaid">
+erDiagram
+    USERS ||--o{ ORDERS : "verir (1-N)"
+    USERS ||--o{ COURIERS : "profili (1-1)"
+    RESTAURANTS ||--o{ MENU_ITEMS : "sunar (1-N)"
+    RESTAURANTS ||--o{ ORDERS : "alır (1-N)"
+    COURIERS ||--o{ ORDERS : "taşır (1-N)"
+    ORDERS ||--o{ ORDER_ITEMS : "içerir (1-N)"
+    MENU_ITEMS ||--o{ ORDER_ITEMS : "satılır (1-N)"
+    ORDERS ||--o{ ORDER_STATUS_LOG : "tarihçe (1-N)"
+
+    USERS {
+        int id PK
+        string username UK
+        string password_hash
+        string full_name
+        string phone
+        string role
+        datetime created_at
+    }
+
+    RESTAURANTS {
+        int id PK
+        int user_id FK
+        string name
+        int location_x
+        int location_y
+        string phone
+        boolean is_active
+    }
+
+    MENU_ITEMS {
+        int id PK
+        int restaurant_id FK
+        string name
+        string description
+        decimal price
+        string category
+        boolean is_available
+    }
+
+    COURIERS {
+        int id PK
+        int user_id FK
+        string vehicle_type
+        int current_x
+        int current_y
+        int active_orders_count
+        string status
+    }
+
+    ORDERS {
+        int id PK
+        int customer_id FK
+        int restaurant_id FK
+        int courier_id FK
+        string status
+        decimal total_amount
+        int delivery_x
+        int delivery_y
+        datetime created_at
+    }
+
+    ORDER_ITEMS {
+        int id PK
+        int order_id FK
+        int menu_item_id FK
+        int quantity
+        decimal unit_price
+        decimal subtotal
+    }
+
+    ORDER_STATUS_LOG {
+        int id PK
+        int order_id FK
+        string previous_status
+        string new_status
+        string changed_by_user_id FK
+        string comment
+        datetime created_at
+    }
+                    </pre>
+                </div>
+            </div>
+
+            <!-- 4. Durum Makinesi -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title"><i class="fa-solid fa-arrows-spin" style="color:var(--purple);"></i> 4. Durum Geçiş Makinesi (State Machine)</div>
+                    <span class="card-badge">İptal Güvencesi</span>
+                </div>
+                <div class="mermaid-box">
+                    <pre class="mermaid">
+stateDiagram-v2
+    [*] --> ALINDI : Müşteri Siparişi Onaylar
+    ALINDI --> HAZIRLANIYOR : Restoran Mutfağa Alır
+    ALINDI --> IPTAL : Müşteri İptal Eder (İptal Butonu Aktif)
+    
+    HAZIRLANIYOR --> HAZIR : Restoran Paketi Tamamlar & Kurye Atanır
+    note right of HAZIRLANIYOR : BU AŞAMADAN SONRA İPTAL KESİNLİKLE YASAKTIR!
+    
+    HAZIR --> YOLDA : Kurye Paketi Alıp Yola Çıkar
+    YOLDA --> TESLIM_EDILDI : Kurye Müşteriye Teslim Eder
+    
+    TESLIM_EDILDI --> [*]
+    IPTAL --> [*]
+                    </pre>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 4: 5 EKRAN TASLAĞI (WIREFRAMES)       -->
+        <!-- ========================================== -->
+        <div id="tab-wireframes" class="tab-content">
+            <div class="grid-3">
+                
+                <div class="wf-card" onclick="openImageModal('ekran_taslaklari/1_musteri_siparis_sepet.png', '1. Müşteri Menü ve Sepet Ekranı')">
+                    <div class="wf-img-wrap">
+                        <img src="ekran_taslaklari/1_musteri_siparis_sepet.png" class="wf-img" alt="Müşteri Menü">
+                    </div>
+                    <div class="wf-body">
+                        <div class="wf-title">1. Müşteri Menü & Sepet</div>
+                        <div class="wf-desc">Restoran seçimi, dinamik sepet hesabı ve teslimat koordinat girişi.</div>
+                    </div>
+                </div>
+
+                <div class="wf-card" onclick="openImageModal('ekran_taslaklari/2_musteri_canli_siparis_takip.png', '2. Canlı Sipariş Takip Ekranı')">
+                    <div class="wf-img-wrap">
+                        <img src="ekran_taslaklari/2_musteri_canli_siparis_takip.png" class="wf-img" alt="Canlı Takip">
+                    </div>
+                    <div class="wf-body">
+                        <div class="wf-title">2. Canlı Takip & İptal Kuralı</div>
+                        <div class="wf-desc">5 aşamalı görsel çizelge ve 'hazırlanıyor'dan sonra iptal engeli.</div>
+                    </div>
+                </div>
+
+                <div class="wf-card" onclick="openImageModal('ekran_taslaklari/3_restoran_siparis_yonetimi.png', '3. Restoran Mutfak Paneli')">
+                    <div class="wf-img-wrap">
+                        <img src="ekran_taslaklari/3_restoran_siparis_yonetimi.png" class="wf-img" alt="Restoran Mutfak">
+                    </div>
+                    <div class="wf-body">
+                        <div class="wf-title">3. Restoran Mutfak & Ciro</div>
+                        <div class="wf-desc">Canlı sipariş kuyruğu, Hazırlanıyor/Hazır butonları ve günlük ciro.</div>
+                    </div>
+                </div>
+
+                <div class="wf-card" onclick="openImageModal('ekran_taslaklari/4_kurye_teslimat_paneli.png', '4. Kurye Teslimat Paneli')">
+                    <div class="wf-img-wrap">
+                        <img src="ekran_taslaklari/4_kurye_teslimat_paneli.png" class="wf-img" alt="Kurye Teslimat">
+                    </div>
+                    <div class="wf-body">
+                        <div class="wf-title">4. Kurye Rota & Puan Dökümü</div>
+                        <div class="wf-desc">Mesafe + 2*İşYükü hesaplama dökümü, teslim onay butonları.</div>
+                    </div>
+                </div>
+
+                <div class="wf-card" onclick="openImageModal('ekran_taslaklari/5_yonetici_rapor_kurye_izleme.png', '5. Yönetici Kontrol Merkezi')">
+                    <div class="wf-img-wrap">
+                        <img src="ekran_taslaklari/5_yonetici_rapor_kurye_izleme.png" class="wf-img" alt="Yönetici Paneli">
+                    </div>
+                    <div class="wf-body">
+                        <div class="wf-title">5. Yönetici Kontrol & Audit</div>
+                        <div class="wf-desc">30x30 ızgara simülasyonu, kurye filosu iş yükü ve denetim logları.</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 5: HOCANIN 10 TUZAK SORUSU VE CEVAPLARI -->
+        <!-- ========================================== -->
+        <div id="tab-qa" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title"><i class="fa-solid fa-graduation-cap" style="color:var(--primary);"></i> Hocanın Sorabileceği 10 Tuzak Soru ve Kusursuz Savunmalar</div>
+                    <span class="card-badge">Soru - Cevap Rehberi</span>
+                </div>
+
+                <div class="qa-item">
+                    <div class="qa-header" onclick="toggleQA(this)">
+                        <span>1. Controller'ın içine doğrudan SQL sorgusu yazsaydınız ne kaybederdiniz?</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="qa-body">
+                        <strong>Cevap:</strong> "Separation of Concerns (Sorumlulukların Ayrılması) prensibini ihlal etmiş olurduk Hocam. Controller yalnızca HTTP istek/yanıt döngüsünü yönetmelidir. SQL yazılırsa Controller veritabanı motoruna sıkı sıkıya bağlanır, birim test (Mock nesnelerle) yazılamaz ve iş mantığı denetleyici katmanına sızarak spagettiye dönüşür."
+                    </div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="qa-header" onclick="toggleQA(this)">
+                        <span>2. Veritabanını SQLite yerine MySQL veya PostgreSQL yaparsak hangi dosyalar değişir?</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="qa-body">
+                        <strong>Cevap:</strong> "Yalnızca <code>src/Repository/</code> altındaki somut repository sınıflarımız (örneğin <code>SqliteOrderRepository.php</code>) değişir. Controller, Service ve State sınıflarımız <code>OrderRepositoryInterface</code> arayüzüne bağımlı olduğu için iş mantığında tek bir satır kod bile değişmez."
+                    </div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="qa-header" onclick="toggleQA(this)">
+                        <span>3. Neden State Tasarım Deseni kullandınız? `switch-case` ile yapılamaz mıydı?</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="qa-body">
+                        <strong>Cevap:</strong> "`switch-case` ile yapılabilirdi ancak bu Open/Closed prensibini ihlal ederdi. Yeni bir durum (örneğin 'İade Edildi') eklendiğinde mevcut tüm `switch` bloklarını bozmak gerekirdi. State deseni sayesinde her durum kendi geçiş kuralını ve iptal kısıtını kendi sınıfında kapsüller (Encapsulation)."
+                    </div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="qa-header" onclick="toggleQA(this)">
+                        <span>4. Neden Öklid (Kuş uçuşu) mesafesi değil de Manhattan mesafesi kullandınız?</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="qa-body">
+                        <strong>Cevap:</strong> "Kuryeler binaların üzerinden uçarak gidemez Hocam. Şehir sokakları dikey ve yatay ızgara (Manhattan Grid) düzenindedir. Bu nedenle sokak mesafesini en gerçekçi simüle eden metrik |x1 - x2| + |y1 - y2| Manhattan formülüdür."
+                    </div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="qa-header" onclick="toggleQA(this)">
+                        <span>5. Kurye puanlama formülündeki 2 × AktifSipariş ne işe yarıyor?</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="qa-body">
+                        <strong>Cevap:</strong> "Sadece mesafeye baksaydık en yakındaki kuryeye 5 sipariş birden yığılır, kurye tıkanırdı. Aktif sipariş katsayısı bir 'iş yükü ceza puanı' (workload penalty) ekleyerek siparişleri filodaki diğer müsait kuryelere dengeli ve adil şekilde paylaştırır."
+                    </div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="qa-header" onclick="toggleQA(this)">
+                        <span>6. Veritabanınız gerçekten 3NF'ye uygun mu? Bir örnek verin.</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="qa-body">
+                        <strong>Cevap:</strong> "Evet Hocam. Örneğin <code>orders</code> tablosunda kuryenin adı, telefonu veya restoranın koordinatları saklanmaz. Sadece <code>courier_id</code> ve <code>restaurant_id</code> tutulur. Böylece kurye adını veya koordinatını güncellediğinde sipariş geçmişinde güncelleme anomalisi (Update Anomaly) yaşanmaz."
+                    </div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="qa-header" onclick="toggleQA(this)">
+                        <span>7. İki sipariş aynı anda 'Hazır' olursa ikisi de aynı kuryeyi seçerse ne olur (Race Condition)?</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="qa-body">
+                        <strong>Cevap:</strong> "Repository katmanında Koşullu UPDATE (`UPDATE couriers ... WHERE id = :id AND active_orders_count = :old_count`) ve Transaction kullanıyoruz. İlk sipariş kuryeyi aldığında kuryenin iş yükü artar; ikinci istek koşul tutmadığı için başarısız olur ve algoritma bir sonraki en iyi kuryeyi seçer."
+                    </div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="qa-header" onclick="toggleQA(this)">
+                        <span>8. Müşteri yemeği yoldayken iptal etmeye çalışırsa sistem nasıl tepki verir?</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="qa-body">
+                        <strong>Cevap:</strong> "State deseni gereği <code>OnWayState</code> sınıfında <code>canCancel()</code> metodu <code>false</code> döner. Servis <code>DomainException</code> fırlatır, Controller müşteriye HTTP 400 döner ve işlem veritabanına yansıtılmaz."
+                    </div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="qa-header" onclick="toggleQA(this)">
+                        <span>9. Bölgede hiç müsait kurye yoksa sistem çöker mi?</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="qa-body">
+                        <strong>Cevap:</strong> "Hayır Hocam. Sıralama diyagramımızın 2. hata dalında gösterdiğimiz gibi sistem <code>NoAvailableCourierException</code> fırlatır. Sipariş HAZIR durumunda bekleme kuyruğunda kalır ve ilk kurye boşa çıktığı an tetiklenen olayla atanır."
+                    </div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="qa-header" onclick="toggleQA(this)">
+                        <span>10. Yapay zekâyı bu projede nasıl kullandınız?</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="qa-body">
+                        <strong>Cevap:</strong> "Yapay zekâyı kod kopyalamak için değil; mimari kurallarımızı denetletmek, katman ihlali olup olmadığını kontrol etmek ve 3NF normalizasyon tablolarını doğrulamak için bir teknik danışman olarak kullandık ve tasarım belgemizde belgeledik."
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 6: RİSK MATRİSİ VE GİTHUB             -->
+        <!-- ========================================== -->
+        <div id="tab-risks" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title"><i class="fa-solid fa-shield-halved" style="color:var(--warning);"></i> Sistem Risk Matrisi ve Önlem Planları</div>
+                    <span class="card-badge">6 Kritik Risk</span>
+                </div>
+                
+                <table style="width:100%;border-collapse:collapse;font-size:13px;text-align:left;">
+                    <thead>
+                        <tr style="border-bottom:1.5px solid var(--border);color:var(--text-muted);">
+                            <th style="padding:10px;">Risk No</th>
+                            <th style="padding:10px;">Risk Tanımı</th>
+                            <th style="padding:10px;">Olasılık</th>
+                            <th style="padding:10px;">Etki</th>
+                            <th style="padding:10px;">Önlem Planı</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom:1px solid var(--border);">
+                            <td style="padding:12px;font-weight:800;color:var(--primary);">R-1</td>
+                            <td style="padding:12px;"><strong>Eşzamanlı Kurye Seçimi (Race Condition):</strong> İki siparişin aynı anda aynı kuryeye atanması.</td>
+                            <td style="padding:12px;color:var(--warning);font-weight:700;">Yüksek</td>
+                            <td style="padding:12px;color:var(--primary);font-weight:700;">Yüksek</td>
+                            <td style="padding:12px;">Veritabanında Koşullu UPDATE ve Transaction kullanımı.</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid var(--border);">
+                            <td style="padding:12px;font-weight:800;color:var(--primary);">R-2</td>
+                            <td style="padding:12px;"><strong>Geçersiz Durum Geçişi İhlali:</strong> Yetkisiz ya da sırasız duruma geçiş isteği.</td>
+                            <td style="padding:12px;color:var(--warning);font-weight:700;">Yüksek</td>
+                            <td style="padding:12px;color:var(--primary);font-weight:700;">Yüksek</td>
+                            <td style="padding:12px;"><code>OrderStateMachineService</code> State deseniyle katı doğrulama ve Exception.</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid var(--border);">
+                            <td style="padding:12px;font-weight:800;color:var(--primary);">R-3</td>
+                            <td style="padding:12px;"><strong>Hazırlanan Yemeğin İptal Edilmesi:</strong> Restoranın zarara uğratılması.</td>
+                            <td style="padding:12px;color:var(--blue);font-weight:700;">Orta</td>
+                            <td style="padding:12px;color:var(--primary);font-weight:700;">Yüksek</td>
+                            <td style="padding:12px;">'Hazırlanıyor' aşamasından sonra iptal butonunu kilitlemek ve API'de 400 dönmek.</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid var(--border);">
+                            <td style="padding:12px;font-weight:800;color:var(--primary);">R-4</td>
+                            <td style="padding:12px;"><strong>Bölgede Müsait Kurye Kalmaması:</strong> Yoğun saatte siparişin askıda kalması.</td>
+                            <td style="padding:12px;color:var(--blue);font-weight:700;">Orta</td>
+                            <td style="padding:12px;color:var(--primary);font-weight:700;">Yüksek</td>
+                            <td style="padding:12px;">Siparişi 'HAZIR' kuyruğuna almak ve kurye boşaldığında otomatik atamak.</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid var(--border);">
+                            <td style="padding:12px;font-weight:800;color:var(--primary);">R-5</td>
+                            <td style="padding:12px;"><strong>Yapay Zekânın Mimariyi Çiğnemesi:</strong> Controller'a SQL yazılması.</td>
+                            <td style="padding:12px;color:var(--warning);font-weight:700;">Yüksek</td>
+                            <td style="padding:12px;color:var(--blue);font-weight:700;">Orta</td>
+                            <td style="padding:12px;">Katman sorumluluk kurallarını yapay zekâya istem olarak vermek ve PR denetimi.</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:12px;font-weight:800;color:var(--primary);">R-6</td>
+                            <td style="padding:12px;"><strong>AJAX Polling Sunucu Yükü:</strong> Sık sorguların SQLite'ı kilitlemesi.</td>
+                            <td style="padding:12px;color:var(--blue);font-weight:700;">Orta</td>
+                            <td style="padding:12px;color:var(--blue);font-weight:700;">Orta</td>
+                            <td style="padding:12px;">Polling aralığını optimize etmek (Mutfak: 5s, Müşteri: 4s) ve hafif sorgular.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Image Modal -->
+    <div class="modal-overlay" id="img-modal" onclick="closeImageModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeImageModal()">&times;</button>
+            <h3 id="modal-title" style="margin-bottom:16px;font-size:18px;font-weight:800;">Ekran Taslağı</h3>
+            <img id="modal-img" src="" style="width:100%;border-radius:12px;border:1px solid var(--border);" alt="Önizleme">
+        </div>
+    </div>
+
+    <script>
+        // Tab switching
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            event.currentTarget.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // Q&A Accordion
+        function toggleQA(el) {
+            el.parentElement.classList.toggle('open');
+        }
+
+        // Image Modal
+        function openImageModal(src, title) {
+            document.getElementById('modal-img').src = src;
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('img-modal').classList.add('active');
+        }
+        function closeImageModal() {
+            document.getElementById('img-modal').classList.remove('active');
+        }
+
+        // Copy Text
+        function copyText(elemId) {
+            const text = document.getElementById(elemId).innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Konuşma metni panoya kopyalandı!');
+            });
+        }
+
+        // Theme Toggle
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            document.getElementById('theme-icon').className = next === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+        }
+
+        // Stopwatch Timer for Rehearsal (0 to 7 minutes)
+        let timerSeconds = 0;
+        let timerInterval = null;
+
+        function toggleTimer() {
+            const btn = document.getElementById('timer-toggle-btn');
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                btn.innerText = 'Devam';
+                btn.style.background = 'var(--primary)';
+            } else {
+                timerInterval = setInterval(() => {
+                    timerSeconds++;
+                    const m = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
+                    const s = (timerSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-text').innerText = `${m}:${s}`;
+
+                    // Speaker alert colors
+                    const t = document.getElementById('timer-text');
+                    if (timerSeconds <= 90) { t.style.color = 'var(--primary)'; } // Mustafa
+                    else if (timerSeconds <= 210) { t.style.color = 'var(--blue)'; } // Mimar
+                    else if (timerSeconds <= 330) { t.style.color = 'var(--purple)'; } // VT & Test
+                    else if (timerSeconds <= 420) { t.style.color = 'var(--warning)'; } // Arayüz
+                    else { t.style.color = 'red'; } // Overtime
+                }, 1000);
+                btn.innerText = 'Durdur';
+                btn.style.background = 'var(--warning)';
+            }
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            timerSeconds = 0;
+            document.getElementById('timer-text').innerText = '00:00';
+            document.getElementById('timer-text').style.color = 'var(--primary)';
+            const btn = document.getElementById('timer-toggle-btn');
+            btn.innerText = 'Başlat';
+            btn.style.background = 'var(--primary)';
+        }
+    </script>
+</body>
+</html>
