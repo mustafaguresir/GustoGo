@@ -27,7 +27,8 @@ flowchart TD
 
     subgraph Layer3 ["3. İş Mantığı ve Servis (Service) Katmanı"]
         OSM["OrderStateMachineService (State Pattern)"]
-        CAS["CourierAssignmentService (Manhattan Algoritması)"]
+        CAS["CourierAssignmentService (Haversine ve İş Yükü Algoritması)"]
+        HDS["HaversineDistanceService (Büyük Daire Küresel Mesafe)"]
         REP["ReportService (Ciro ve İstatistikler)"]
         Strat["ScoreBasedAssignmentStrategy (Strategy Pattern)"]
     end
@@ -107,12 +108,18 @@ classDiagram
         +calculateManhattanDistance(int x1, int y1, int x2, int y2) int
     }
 
+    class HaversineDistanceService {
+        +calculate(float lat1, float lon1, float lat2, float lon2) float
+        +calculateFromGrid(int x1, int y1, int x2, int y2) float
+    }
+
     class AssignmentStrategyInterface {
         <<interface>>
         +findBestCourier(array candidates, Restaurant r, int targetX, int targetY) Courier
     }
 
     class ScoreBasedAssignmentStrategy {
+        -HaversineDistanceService haversine
         +findBestCourier(array candidates, Restaurant r, int targetX, int targetY) Courier
     }
 
@@ -149,16 +156,20 @@ classDiagram
 
     class OrderRepositoryInterface {
         <<interface>>
-        +save(Order o) void
+        +save(Order o) int
+        +saveWithTransaction(Order o, array items) int
         +findById(int id) Order
+        +getOrderWithDetails(int id) array
         +updateStatusConditional(int id, OrderStatus oldStatus, OrderStatus newStatus) bool
         +assignCourier(int orderId, int courierId) void
     }
 
     class SqliteOrderRepository {
         -PDO pdo
-        +save(Order o) void
+        +save(Order o) int
+        +saveWithTransaction(Order o, array items) int
         +findById(int id) Order
+        +getOrderWithDetails(int id) array
         +updateStatusConditional(int id, OrderStatus oldStatus, OrderStatus newStatus) bool
     }
 
@@ -282,7 +293,7 @@ erDiagram
 
     USERS {
         int id PK
-        string username UK
+        string username "UK"
         string password_hash
         string full_name
         string phone
@@ -361,16 +372,18 @@ erDiagram
 
 ```mermaid
 stateDiagram-v2
-    [*] --> ALINDI : Müşteri Siparişi Onaylar
+    [*] --> ALINDI : Musteri Onaylar
+    ALINDI --> HAZIRLANIYOR : Mutfaga Alindi
+    ALINDI --> IPTAL : Musteri Iptal Etti
     
-    ALINDI --> HAZIRLANIYOR : Restoran Mutfağa Alır
-    ALINDI --> IPTAL : Müşteri İptal Eder (İptal Butonu Aktif)
+    HAZIRLANIYOR --> HAZIR : Paket Hazirlandi ve Kurye Atandi
     
-    HAZIRLANIYOR --> HAZIR : Restoran Paketi Tamamlar & Kurye Atanır
-    note right of HAZIRLANIYOR : BU AŞAMADAN SONRA İPTAL KESİNLİKLE YASAKTIR!
+    note right of HAZIRLANIYOR
+        Bu asamadan sonra iptal kesinlikle yasaktir
+    end note
     
-    HAZIR --> YOLDA : Kurye Paketi Teslim Alıp Yola Çıkar
-    YOLDA --> TESLIM_EDILDI : Kurye Müşteriye Teslim Eder
+    HAZIR --> YOLDA : Kurye Yola Cikti
+    YOLDA --> TESLIM_EDILDI : Kurye Teslim Etti
     
     TESLIM_EDILDI --> [*]
     IPTAL --> [*]

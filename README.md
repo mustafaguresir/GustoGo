@@ -2,7 +2,22 @@
 
 Modern, akıllı ve katmanlı mimariye sahip **Yemek Sipariş ve Kurye Takip Sistemi**.
 
-Bu proje; **State Tasarım Deseni**, **PHP 8.1+ Enumlar**, **Manhattan Mesafe Izgarası**, **Akıllı Kurye Puanlama Algoritması**, **Koşullu UPDATE (Optimistic Concurrency)** ve **Rol Tabanlı Yetkilendirme (RBAC)** prensipleriyle eksiksiz olarak geliştirilmiştir.
+Bu proje; **Resmi Proje Şartnamesi (9. Yemek Sipariş ve Kurye Takip)** kriterlerine birebir uygun olarak **State Tasarım Deseni**, **PHP 8.1+ Enumlar**, **Haversine Küresel Mesafe Hesabı**, **Akıllı Kurye Puanlama Algoritması**, **PDO ve Transaction Güvencesi**, **Çoklu SQL JOIN Sorguları** ve **Rol Tabanlı Yetkilendirme (RBAC)** prensipleriyle eksiksiz geliştirilmiştir.
+
+---
+
+## 📋 Resmi Proje Şartnamesi (9. Yemek Sipariş ve Kurye Takip)
+
+| Alan | Resmi Şartname Kriteri | Projedeki Somut Karşılığı |
+|---|---|---|
+| **Zorluk** | 4 / 5 | İleri seviye durum makinesi ve optimizasyon |
+| **Yapılacaklar** | Müşteri restoran menüsünden sipariş verir; restoran siparişi hazırlar; kurye atanır ve teslim eder. Üç rolün de kendi paneli vardır. | Müşteri, Restoran, Kurye ve Yönetici için 4 bağımsız panel (`public/index.html`) |
+| **Çekirdek problem** | **Sipariş durum makinesi** (alındı ➔ hazırlanıyor ➔ hazır ➔ yolda ➔ teslim edildi; iptal) ve geçersiz geçişlerin engellenmesi (yolda olan sipariş "hazırlanıyor"a dönemez); **kurye atama algoritması:** müsait kuryeler arasından siparişe mesafe ve mevcut iş yüküne göre en uygun olanın seçilmesi. | `OrderStateMachineService` (State Pattern), `ScoreBasedAssignmentStrategy` |
+| **Zorunlu özellikler** | 3 rol (müşteri, restoran, kurye) ve yönetici; en az 3 restoran ve toplam 10 ürün; sepet; her rolün paneli durum değişince otomatik yenilenir (AJAX); tahmini teslim süresi; sipariş geçmişi; restoranın günlük sipariş raporu. | 4 rol paneli; 7 restoran, 27 ürün; sepet; AJAX reaktif yenileme; dinamik tahmini teslim süresi; `getDailyReport()` |
+| **PHP özellikleri** | State deseni, PHP 8.1 enum (sipariş durumu), mesafe hesabı (Haversine), AJAX, PDO ve transaction, JOIN, rol bazlı yetkilendirme. | - State Deseni (`App\Service\State`)<br>- Enum: `App\Enum\OrderStatus`<br>- Haversine: `App\Service\HaversineDistanceService`<br>- AJAX API: `public/api.php`<br>- PDO Transaction: `saveWithTransaction()`<br>- SQL JOIN: `getOrderWithDetails()`<br>- RBAC: `OrderController::changeStatus()` |
+| **Asgari tablolar** | `users`, `restaurants`, `menu_items`, `orders`, `order_items`, `couriers`, `order_status_log` (en az 6 tablo) | 7 Tablolu 3NF SQLite Şeması (`database/schema.sql` ve `database/app.sqlite`) |
+| **Kapsam sınırı** | Harita servisi, canlı konum takibi ve ödeme yok; konumlar sabit koordinat veya mahalle olarak tutulur. | Kadıköy, Beşiktaş vb. sabit mahalle koordinatları ve 2D şematik ızgara. |
+| **Sunumda kanıt** | 1. Geçersiz durum geçişinin reddi;<br>2. İki kurye arasında doğru seçimi gösteren birim testi;<br>3. Müşteri panelinin sayfa yenilemeden güncellenmesi. | Arayüzde ve sunum rehberinde tek tıkla çalıştırılan **3 Canlı Kanıt Merkezi** (`tests/verify_system.py`, `public/api.php`) |
 
 ---
 
@@ -11,40 +26,20 @@ Bu proje; **State Tasarım Deseni**, **PHP 8.1+ Enumlar**, **Manhattan Mesafe Iz
 1. **4 Farklı Rol Paneli (Rol Yetkilendirme):**
    - 🛍️ **Müşteri (Customer):** 7 restoran, 27 leziz yemek, dinamik sepet, canlı 5 aşamalı sipariş takip stepper'ı, sipariş geçmişi ve iptal yönetimi.
    - 👨‍🍳 **Satıcı / Restoran (Restaurant):** Tüm 7 restoran için ayrı ayrı mutfak sipariş kuyruğu, siparişi mutfağa alma ("Hazırlanıyor"), paketleme ("Hazır"), menü fiyat listesi ve günlük ciro raporu.
-   - 🛵 **Kurye (Courier):** 4 farklı kurye için aktif teslimat görevi, restoran alım ve müşteri teslimat koordinatları, paketi teslim alma ("Yolda"), müşteriye teslim etme ("Teslim Edildi") ve Manhattan skorlama dökümü.
-   - 🛡️ **Yönetici (Admin):** 30x30 şehir ızgara haritası, tüm kurye filosu ve canlı iş yükü analizi, sistem siparişleri ve `order_status_log` denetim günlüğü (audit trail).
+   - 🛵 **Kurye (Courier):** 4 farklı kurye için aktif teslimat görevi, restoran alım ve müşteri teslimat koordinatları, paketi teslim alma ("Yolda"), müşteriye teslim etme ("Teslim Edildi") ve Haversine skorlama dökümü.
+   - 🛡️ **Yönetici (Admin):** Tüm kurye filosu ve canlı iş yükü analizi, sistem siparişleri ve `order_status_log` denetim günlüğü (audit trail).
 
 2. **Sipariş Durum Makinesi (State Pattern):**
    - Geçerli Sıra: `alındı` ➔ `hazırlanıyor` ➔ `hazır` ➔ `yolda` ➔ `teslim edildi`
    - **İptal Kuralı:** İptal işlemi **yalnızca "hazırlanıyor" aşamasından önce** (sadece `alındı` durumunda) gerçekleştirilebilir. Mutfakta pişirilmeye başlanan veya kuryeye verilen siparişler iptal edilemez.
 
-3. **Akıllı Kurye Atama Algoritması (Manhattan Geometrisi):**
-   - **Mesafe Formülü:** $|x_1 - x_2| + |y_1 - y_2|$ (Izgara koordinatları üzerinde mutlak farklar toplamı)
-   - **Kurye Puanı:** $\text{Puan} = \text{Mesafe} + (2 \times \text{AktifSipariş})$
+3. **Akıllı Kurye Atama Algoritması (Haversine Formülü):**
+   - **Mesafe Formülü:** $d = 2R \arcsin\left(\sqrt{\sin^2(\Delta\text{lat}/2) + \cos(\text{lat}_1)\cos(\text{lat}_2)\sin^2(\Delta\text{lon}/2)}\right)$ ($R = 6371$ km)
+   - **Kurye Puanı:** $\text{Puan} = \text{Mesafe (km)} + (2 \times \text{AktifSipariş})$
    - **Kriter:** Bölgedeki en düşük puana sahip müsait kurye seçilerek siparişe atanır.
 
-4. **Canlı 2D Şehir Izgara Haritası:**
-   - HTML5 Canvas üzerinde 30x30 ızgara düzlemi.
-   - Restoranlar (kırmızı), kuryeler (mavi) ve müşteri teslimat adresi (yeşil) canlı olarak çizilir.
-   - Sipariş verildiğinde Kurye ➔ Restoran ➔ Müşteri rotası Manhattan ızgara çizgileriyle gösterilir.
-
-5. **Modern Yemeksepeti / Getir Tasarım Dili:**
-   - Tam genişlik hero banner & kategoriler (Kebap, Burger, Pizza, Sushi, Tavuk, Balık, Tatlı).
-   - Gerçek yemek fotoğrafları, rozetler ("Popüler", "Şef Seçimi"), puanlar, hazırlık süreleri.
-   - Karanlık (Dark) ve Aydınlık (Light) tema desteği (LocalStorage kalıcılığı).
-
----
-
-## 🗄️ Veritabanı Mimarisi (7 Tablo)
-
-SQLite veritabanı şeması (`database/schema.sql`):
-1. `users` — Kullanıcı kimlik ve rol yetkilendirmeleri (`customer`, `restaurant`, `courier`, `admin`).
-2. `restaurants` — Restoran adı, telefon ve $(X, Y)$ ızgara koordinatları.
-3. `menu_items` — Yemek adı, kategori, açıklama, birim fiyat ve stok durumu.
-4. `couriers` — Kurye adı, araç tipi (Motor, E-Bisiklet, Scooter), anlık $(X, Y)$ konumu ve aktif sipariş sayısı.
-5. `orders` — Sipariş durumu (`status`), müşteri, restoran, atanan kurye, toplam tutar, teslimat koordinatları.
-6. `order_items` — Siparişteki ürünler, adet ve ara toplamlar ($N-M$ junction tablosu).
-7. `order_status_log` — Durum değişikliklerinin tarihçesi (önceki durum, yeni durum, değiştiren kullanıcı, zaman damgası).
+4. **Hocanın İstediği 3 Canlı Kanıt Merkezi:**
+   - Web arayüzünün üst menüsündeki **"🎓 3 Zorunlu Kanıt"** butonu ile jüriye tek tıkla canlı kanıt gösterilebilir.
 
 ---
 
@@ -58,11 +53,11 @@ Uygulama yerel HTTP sunucusu ile tarayıcıda doğrudan çalıştırılabilir:
 python -m http.server 8000 --directory public
 ```
 
-Tarayıcınızda açın:
+Tarayıcınızda açın:  
 👉 **`http://localhost:8000`**
 
 ### 2. Doğrulama ve Algoritma Testlerini Çalıştırma
-Sistem gereksinimlerini, Manhattan formülünü, kurye puanlamasını ve durum makinesini test etmek için:
+Sistem gereksinimlerini, Haversine formülünü, kurye puanlamasını, PDO transaction ve 3 kanıtı test etmek için:
 
 ```bash
 python tests/verify_system.py
@@ -70,18 +65,23 @@ python tests/verify_system.py
 
 *Çıktı Örneği:*
 ```
-=================================================================
-YEMEK SIPARIS VE KURYE TAKIP SISTEMI - TEST VE DOGRULAMA
-=================================================================
-[OK] TEST 1 BASARILI: Manhattan mesafe dogru hesaplandi: |14-12| + |10-8| = 4 birim.
-[OK] TEST 2 BASARILI: En dusuk skorlu kurye (Ali Kaya, Skor: 6) basariyla secildi.
-[OK] TEST 3 BASARILI: Durum makinesi gecis kurallari ve 'hazirlaniyor'dan sonra iptal yasagi dogrulandi.
-[OK] TEST 4 BASARILI: Veritabaninda 7 restoran, 27 menu urunu ve 4 kurye mevcut (Gereksinimler karsilandi).
-[OK] TEST 5 BASARILI: Kosullu UPDATE ve order_status_log denetim kaydi dogrulandi.
+======================================================================
+YEMEK SIPARIS VE KURYE TAKIP SISTEMI - RESMI SARTNAME DOGRULAMA TESTI
+======================================================================
+[OK] TEST 1: Haversine kuresel mesafe formulu dogrulandi: Kadikoy Moda - Rihtim arasi 0.71 km.
+[OK] SUNUMDA KANIT 1 BASARILI: 'yolda' olan siparisin 'hazirlaniyor'a veya 'iptal'e donusu KESINLIKLE REDDEDILDI.
+[OK] SUNUMDA KANIT 2 BASARILI: Iki kurye arasinda dogru secim yapildi:
+     - Kurye 1 (Ali):  0.71 km, 2 aktif siparis -> Skor: 4.71
+     - Kurye 2 (Veli): 1.26 km, 0 aktif siparis -> Skor: 1.26
+     -> KAZANAN: Kurye Veli (Uzak / Bosta) (Daha uzak olmasina ragmen is yuku bos oldugu icin secildi!)
+[OK] TEST 4: Asgari 7 tablo eksiksiz mevcut: users, restaurants, menu_items, orders, order_items, couriers, order_status_log
+[OK] TEST 5: En az 3 restoran ve 10 urun sarti karsilandi (7 restoran, 27 urun mevcut).
+[OK] TEST 6: PDO Transaction ve 4 tablolu JOIN sorgusu dogrulandi:
+     Siparis #1 | Durum: alindi | Tutar: 320.0 TL | Restoran: Lezzet Kebap Salonu | Musteri: Ahmet Yılmaz
 
-=================================================================
-TUM SISTEM VE IS MANTIGI TESTLERI EKSIKSIZ BASARILI!
-=================================================================
+======================================================================
+TUM RESMI SARTNAME KRITERLERI VE SUNUM KANITLARI BASARIYLA DOGRULANDI!
+======================================================================
 ```
 
 ---

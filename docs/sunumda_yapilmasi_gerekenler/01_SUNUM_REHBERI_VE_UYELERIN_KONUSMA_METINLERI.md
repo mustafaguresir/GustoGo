@@ -17,7 +17,7 @@
 > 
 > **Vizyonumuz:** Yemek siparişi sürecinde yaşanan gecikmeleri, sipariş iptallerindeki restoran mağduriyetlerini ve kuryeler arasındaki dengesiz iş dağılımını matematiksel ve mimari kurallarla çözmektir.
 > 
-> **Çekirdek Problemimiz:** Restoran siparişi hazırladığında; kuryenin restorana mesafesi ile üzerindeki mevcut iş yükünü birlikte ele alarak en optimum kuryeyi adil bir şekilde atamaktır. Bunu 30x30 şehir ızgarasında **Manhattan Geometrisi** ve **Puan = Mesafe + 2 × Aktif Sipariş** formülüyle çözüyoruz.
+> **Çekirdek Problemimiz:** Restoran siparişi hazırladığında; kuryenin restorana mesafesi ile üzerindeki mevcut iş yükünü birlikte ele alarak en optimum kuryeyi adil bir şekilde atamaktır. Şartname gereğince mesafeyi küresel koordinatlar üzerinde **Haversine Formülü** ile hesaplıyoruz. Kurye seçim formülümüz: **Puan = Haversine Mesafesi (km) + 2 × Aktif Sipariş İş Yükü**.
 > 
 > Sistemimizde **Rol Tabanlı Yetkilendirme (RBAC)** ile 4 ana rol tanımladık:
 > 1. **Müşteri:** Sepet oluşturur, adresini seçer ve canlı 5 aşamalı sipariş takibi yapar.
@@ -65,7 +65,7 @@
 
 ### 🗄️ 3. ÜYE: VERİTABANI VE TEST SORUMLUSU
 * **Süre:** 2,0 Dakika (03:30 – 05:30)
-* **Sorumlu Olduğu Alanlar:** Sıralama Diyagramı (Sequence Diagram - Çekirdek Akış ve Hata Dalları), ER Diyagramı, 3NF Normalizasyon Analizi ve Birim Testler.
+* **Sorumlu Olduğu Alanlar:** Sıralama Diyagramı, PDO Transaction, Çoklu JOIN, 3NF Normalizasyon Analizi ve Hocanın İstediği 3 Zorunlu Kanıt.
 
 #### 📢 Konuşma Metni:
 > *"Merhabalar Hocam, ben projenin Veritabanı ve Test Sorumlusuyum.  
@@ -77,17 +77,20 @@
 >    * **Hata Dalı 1:** Eğer sipariş sırasız bir durumda ise (örneğin henüz `ALINDI` aşamasındaysa) `InvalidOrderTransitionException` fırlatılır ve işlem HTTP 400 ile engellenir.
 > 3. Durum geçerliyse, `CourierAssignmentService` bölgedeki müsait kuryeleri çeker.
 >    * **Hata Dalı 2:** Eğer bölgede hiç boş kurye yoksa `NoAvailableCourierException` fırlatılır, sipariş kuyrukta bekletilir ve restorana uyarı verilir.
-> 4. Başarılı dalda: $Mesafe + 2 \times AktifSipariş$ formülüyle en düşük skora sahip kurye (Ali Kaya, Skor: 6) seçilir.
+> 4. Başarılı dalda: Haversine mesafesi ve iş yüküyle en düşük skora sahip kurye seçilir.
 > 5. Koşullu UPDATE (`updateStatusConditional`) ile durum veritabanında atomik olarak `HAZIR` yapılır, kurye atanır ve kuryenin iş yükü 1 artırılır.
 > 
-> **Veritabanı ve 3NF Normalizasyon Analizimiz:**  
+> **Veritabanı, PDO Transaction ve Çoklu JOIN Analizimiz:**  
 > Sistemimizde 7 ilişkisel tablo bulunmaktadır:
-> - **1NF:** Tüm sütunlar atomiktir. Sipariş edilen ürünler tek hücrede metin değil; N-M ilişkisini çözen `order_items` tablosunda ayrı ayrı satırlarda tutulur.
-> - **2NF:** Kısmi fonksiyonel bağımlılık yoktur; her satır kendi birincil anahtarına (`id`) tam bağımlıdır.
-> - **3NF:** Geçişli bağımlılıklar (Transitive Dependency) tamamen ortadan kaldırılmıştır. Örneğin; `orders` tablosunda kuryenin adı, telefonu veya anlık koordinatları tutulmaz; yalnızca `courier_id` tutulur. Kurye hareket edip koordinatını güncellediğinde sipariş geçmişi asla bozulmaz.
+> - **PDO Transaction:** Sipariş oluştururken; `orders`, `order_items` ve `order_status_log` tabloları tek bir atomik transaction içinde işlenir (`saveWithTransaction`). Hata durumunda rollBack yapılarak veri tutarlılığı güvenceye alınır.
+> - **Çoklu JOIN Sorguları:** `getOrderWithDetails` metodumuzda `orders`, `restaurants`, `users`, `couriers` ve `order_items` olmak üzere 5 tablo `INNER JOIN` ve `LEFT JOIN` ile tek sorguda birleştirilir.
+> - **3NF:** Geçişli bağımlılıklar tamamen engellenmiştir. `orders` tablosunda kuryenin veya restoranın adresi, telefonu tutulmaz; yalnızca ID'leri tutulur.
 > 
-> **Test Senaryolarımız:**  
-> Yazdığımız testlerle; Manhattan formülünün doğruluğunu, hatalı durum geçişinin engellendiğini, 'hazırlanıyor' aşamasından sonra iptalin kesinlikle reddedildiğini ve en uygun kuryenin seçildiğini başarıyla doğruladık.
+> **HOCANIN ŞARTNAMEDE İSTEDİĞİ 3 ZORUNLU KANIT:**  
+> Canlı sunumumuzda 3 kritik kanıtı hocamızın huzurunda sergiliyoruz:  
+> 1. **Geçersiz Durum Geçişinin Reddi:** 'Yolda' olan bir sipariş 'hazırlanıyor'a veya 'iptal'e çekilmeye çalışıldığında sistem HTTP 400 ile işlemi reddetmekte ve veritabanını korumaktadır.  
+> 2. **İki Kurye Arasında Doğru Seçim Birim Testi:** Kurye 1 (Ali - 0.71 km, 2 aktif sipariş, Skor: 4.71) daha yakın olmasına rağmen, Kurye 2 (Veli - 1.26 km, 0 aktif sipariş, Skor: 1.26) iş yükü boş olduğu için algoritma tarafından başarıyla seçilmektedir.  
+> 3. **Müşteri Panelinin Sayfa Yenilemeden Güncellenmesi:** Restoran mutfakta durumu 'Hazırlanıyor' yaptığı anda, müşteri paneli F5 yapılmadan AJAX senkronizasyonuyla anında güncellenmektedir.
 > 
 > Şimdi arayüz taslaklarımızı ve risk matrisimizi sunmak üzere sözü Arayüz ve Dokümantasyon Sorumlumuza bırakıyorum."*
 

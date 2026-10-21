@@ -1,33 +1,50 @@
 # Yemek Sipariş ve Kurye Takip Sistemi - Tasarım Belgesi
 
-**Ders:** PHP Programlama – Tasarım ve Mimari (Hafta 3)  
-**Proje Adı:** Yemek Sipariş ve Kurye Takip Sistemi (Food Delivery & Smart Courier Dispatch)  
+**Ders:** PHP Programlama – Tasarım ve Mimari (Hafta 3 / 4)  
+**Proje Adı:** Yemek Sipariş ve Kurye Takip Sistemi (GustoGo - Food Delivery & Smart Courier Dispatch)  
 **Grup Sorumluları ve Sunum Görev Dağılımı:**
 - **Proje Yöneticisi:** @mustafa-nuri-ural (Sunum: Proje vizyonu, çekirdek problem, kullanıcı rolleri ve 3 ana hikâye - 1,5 dk)
 - **Yazılım Mimarı:** @mimar-uye (Sunum: Katmanlı mimari, çekirdek sınıflar, State ve Strategy desenleri ve gerekçeleri - 2 dk)
-- **Veritabanı & Test Sorumlusu:** @vt-test-uye (Sunum: Kurye atama ve durum sıralama diyagramı, ER diyagramı ve 3NF analizi - 2 dk)
+- **Veritabanı & Test Sorumlusu:** @vt-test-uye (Sunum: Kurye atama ve durum sıralama diyagramı, PDO transaction, JOIN, ER diyagramı ve 3 zorunlu kanıt - 2 dk)
 - **Arayüz & Dokümantasyon Sorumlusu:** @ui-doc-uye (Sunum: 5 adet ekran taslağı, sayfa haritası, risk matrisi ve GitHub backlog - 1,5 dk)
+
+---
+
+## 📌 Resmi Proje Şartnamesi (9. Yemek Sipariş ve Kurye Takip)
+
+Dersin resmi şartname tablosunda tanımlanan zorunlu kriterler ve projemizdeki somut karşılıkları:
+
+| Alan | Resmi Şartname İçeriği | GustoGo Sistemindeki Karşılığı |
+|---|---|---|
+| **Zorluk** | 4 / 5 | İleri seviye durum makinesi, Haversine optimizasyonu, RBAC |
+| **Yapılacaklar** | Müşteri restoran menüsünden sipariş verir; restoran siparişi hazırlar; kurye atanır ve teslim eder. Üç rolün de kendi paneli vardır. | Müşteri, Restoran, Kurye ve Yönetici için 4 ayrık panel (`public/index.html`) |
+| **Çekirdek problem** | **Sipariş durum makinesi** (alındı ➔ hazırlanıyor ➔ hazır ➔ yolda ➔ teslim edildi; iptal) ve geçersiz geçişlerin engellenmesi (yolda olan sipariş "hazırlanıyor"a dönemez); **kurye atama algoritması:** müsait kuryeler arasından siparişe mesafe ve mevcut iş yüküne göre en uygun olanın seçilmesi. | - `OrderStateMachineService` & `App\Service\State\*` (State Pattern)<br>- `ScoreBasedAssignmentStrategy` (Haversine & İş Yükü Formülü) |
+| **Zorunlu özellikler** | 3 rol (müşteri, restoran, kurye) ve yönetici; en az 3 restoran ve toplam 10 ürün; sepet; her rolün paneli durum değişince otomatik yenilenir (AJAX); tahmini teslim süresi; sipariş geçmişi; restoranın günlük sipariş raporu. | - 4 rol paneli (Müşteri, Mutfak, Kurye, Admin)<br>- 7 Restoran, 27 Menü Ürünü<br>- Canlı sepet ve tahmini teslim süresi (25-35 dk)<br>- AJAX reaktif durum yenileme<br>- `SqliteOrderRepository::getDailyReport()` |
+| **PHP özellikleri** | State deseni, PHP 8.1 enum (sipariş durumu), mesafe hesabı (Haversine), AJAX, PDO ve transaction, JOIN, rol bazlı yetkilendirme. | - State Deseni: `OrderStateInterface` ve 6 durum sınıfı<br>- PHP 8.1 Enum: `OrderStatus`, `CourierStatus`<br>- Mesafe: `HaversineDistanceService`<br>- AJAX Endpoint: `public/api.php`<br>- PDO Transaction: `saveWithTransaction()`<br>- Çoklu JOIN: `getOrderWithDetails()` (5 tablo JOIN)<br>- RBAC: `OrderController::changeStatus()` |
+| **Asgari tablolar** | `users`, `restaurants`, `menu_items`, `orders`, `order_items`, `couriers`, `order_status_log` (en az 6 tablo) | 7 Tablolu 3NF SQLite Şeması (`database/schema.sql` ve `database/app.sqlite`) |
+| **Kapsam sınırı** | Harita servisi, canlı konum takibi ve ödeme yok; konumlar sabit koordinat veya mahalle olarak tutulur. | Kadıköy Moda, Kadıköy Rıhtım, Fenerbahçe, Beşiktaş vb. sabit mahalle koordinatları ve 2D şematik ızgara. |
+| **Sunumda kanıt** | 1. Geçersiz durum geçişinin reddi;<br>2. İki kurye arasında doğru seçimi gösteren birim testi;<br>3. Müşteri panelinin sayfa yenilemeden güncellenmesi. | Arayüzde tek tıkla çalışan **"🎓 3 Zorunlu Kanıt"** test paneli ve konsol testleri (`tests/verify_system.py`) |
 
 ---
 
 ## 1. Mimari (Katman Şeması ve Klasör Yapısı)
 
 Sistem, **Katmanlı Mimari (Layered Architecture)** prensiplerine harfiyen uygun olarak tasarlanmıştır. Her katmanın kesin ve net bir sorumluluğu bulunup, bir katman sadece doğrudan altındaki katmanla konuşur:  
-`public/index.php → Router → Controller → Service → Repository → Model/Database`.
+`public/index.php / api.php → Router → Controller → Service → Repository → Model/Database`.
 
 ### Katman Sorumluluk Tablosu
 
 | Katman | Görevi | Asla Yapmaz | Bizim Projemizdeki Karşılığı |
 | :--- | :--- | :--- | :--- |
-| **Router** | URL ve HTTP metoduna göre ilgili Controller metodunu seçer | İş kuralı veya SQL içermez | `POST /orders/transition` → `OrderController::changeStatus` |
-| **Controller** | `$_POST`/`$_GET` verilerini karşılar, giriş doğrulaması yapar, Servisi çağırır, JSON/View döner | SQL sorgusu yazmaz, kurye puanı veya sipariş tutarı hesaplamaz | `OrderController`, `CourierController`, `RestaurantController`, `AuthController` |
-| **Service** | Çekirdek algoritma, durum makinesi (State Machine), Manhattan mesafe hesabı ve kurye atama mantığı | `$_POST`/`$_GET` doğrudan okumaz, HTML çıktısı üretmez | `OrderStateMachineService`, `CourierAssignmentService`, `ReportService` |
-| **Repository** | Veritabanı sorgularını (koşullu UPDATE, JOIN, INSERT) yönetir ve soyutlar | İş kuralı içermez, Controller katmanı ile doğrudan konuşmaz | `OrderRepositoryInterface`, `CourierRepositoryInterface`, `RestaurantRepositoryInterface` |
-| **Model** | Veritabanı varlıklarını (Entity) temsil eden saf veri taşıyıcı sınıflardır | Veritabanına doğrudan erişmez, SQL çalıştırmaz | `Order`, `OrderItem`, `Courier`, `Restaurant`, `User`, `MenuItem` |
-| **View** | Kullanıcıya HTML/JSON arayüzünü sunar; AJAX ile arka planda veri çeker | Hesaplama yapmaz, veritabanına bağlanmaz | `views/customer/menu.php`, `views/restaurant/kitchen.php`, `views/courier/panel.php` |
+| **Router / API** | URL ve HTTP metoduna göre ilgili Controller metodunu seçer | İş kuralı veya SQL içermez | `POST /orders/transition` → `OrderController::changeStatus` (`public/api.php`) |
+| **Controller** | `$_POST`/`$_GET` verilerini karşılar, giriş doğrulaması ve RBAC yetki kontrolü yapar, Servisi çağırır, JSON/View döner | SQL sorgusu yazmaz, kurye puanı veya sipariş tutarı hesaplamaz | `OrderController`, `CourierController`, `RestaurantController`, `AuthController` |
+| **Service** | Çekirdek algoritma, durum makinesi (State Machine), Haversine küresel mesafe hesabı ve kurye puanlama mantığı | `$_POST`/`$_GET` doğrudan okumaz, HTML çıktısı üretmez | `OrderStateMachineService`, `CourierAssignmentService`, `HaversineDistanceService`, `ReportService` |
+| **Repository** | Veritabanı sorgularını (PDO transaction, koşullu UPDATE, çoklu JOIN, INSERT) yönetir ve soyutlar | İş kuralı içermez, Controller katmanı ile doğrudan konuşmaz | `OrderRepositoryInterface`, `SqliteOrderRepository`, `CourierRepositoryInterface`, `RestaurantRepositoryInterface` |
+| **Model** | Veritabanı varlıklarını (Entity) temsil eden saf veri taşıyıcı sınıflardır | Veritabanına doğrudan erişmez, SQL çalıştırmaz | `Order`, `OrderItem`, `Courier`, `Restaurant`, `User`, `MenuItem`, `OrderStatusLog` |
+| **View / UI** | Kullanıcıya HTML/JSON arayüzünü sunar; AJAX ile arka planda veri çeker | Hesaplama yapmaz, veritabanına bağlanmaz | `public/index.html`, `public/js/state.js`, `public/js/app.js` |
 
 > **Kontrol Sorusu Yanıtı:** *"Veritabanını değiştirirsek (örneğin SQLite'tan MySQL veya PostgreSQL'e geçilirse) hangi dosyalar değişir?"*  
-> **Cevap:** Yalnızca `src/Repository/` altındaki somut repository sınıfları (`SqliteOrderRepository.php` vb.) değişir. Controller, Service, Model sınıfları ve durum makinesi arayüzlere (`Interface`) bağımlı olduğundan tek bir satır kod bile değişmez.
+> **Cevap:** Yalnızca `src/Repository/` altındaki somut repository sınıfları (`SqliteOrderRepository.php` vb.) değişir. Controller, Service, Model sınıfları ve durum makinesi arayüzlere (`Interface`) bağımlı olduğundan tek bir satır iş kodu bile değişmez.
 
 ### Klasör Yapısı
 
@@ -317,7 +334,7 @@ erDiagram
 
     USERS {
         int id PK
-        string username UK
+        string username "UK"
         string password_hash
         string full_name
         string phone
@@ -408,9 +425,16 @@ erDiagram
 - **Alternatif:** Controller veya Service içerisinde `if ($current == 'yolda' && $next == 'hazir')` gibi yüzlerce satırlık kırılgan `switch-case` ve `if-else` mantık blokları yazmak.
 - **Neden:** Her durum kendi geçiş kurallarını ve iptal edilebilirlik şartını kendi sınıfında kapsüller (Encapsulation). Yeni bir durum (örneğin `"restorana_iade"`) eklendiğinde mevcut kod bloklarını bozmadan sisteme kolayca entegre edilir.
 
-### 2. Strategy (Strateji) Tasarım Deseni
+### 2. Strategy (Strateji) Tasarım Deseni ve Haversine Algoritması
 - **Problem:** Kurye atama algoritmasının ilerleyen dönemde farklı iş modellerine göre (örneğin sadece mesafeye göre, en yüksek müşteri puanına sahip kuryeye göre veya yoğun saatlerde en az siparişi olana göre) çalışma anında değiştirilebilir olması gereksinimi.
-- **Desen:** `AssignmentStrategyInterface` tanımlanmış ve varsayılan olarak `ScoreBasedAssignmentStrategy` (Puan = Mesafe + 2 × Aktif Sipariş Sayısı) sınıfı ile uygulanmıştır.
+- **Desen:** `AssignmentStrategyInterface` tanımlanmış ve varsayılan olarak `ScoreBasedAssignmentStrategy` sınıfı ile uygulanmıştır.
+- **Mesafe ve Puanlama Formülü (Haversine Formülü):**
+  Dünya yarıçapı $R = 6371\text{ km}$ kabul edilerek iki nokta $(\phi_1, \lambda_1)$ ve $(\phi_2, \lambda_2)$ arasındaki küresel büyük daire mesafesi hesaplanır:
+  $$\Delta\phi = \phi_2 - \phi_1, \quad \Delta\lambda = \lambda_2 - \lambda_1$$
+  $$a = \sin^2\left(\frac{\Delta\phi}{2}\right) + \cos(\phi_1) \cdot \cos(\phi_2) \cdot \sin^2\left(\frac{\Delta\lambda}{2}\right)$$
+  $$c = 2 \cdot \arctan2\left(\sqrt{a}, \sqrt{1-a}\right), \quad d = R \cdot c \quad (\text{km})$$
+  $$\text{Kurye Puanı} = \text{Mesafe (km)} + 2 \times \text{Aktif Sipariş Sayısı}$$
+  *Kural:* En düşük puana sahip kurye seçilir. Bu formül sayesinde restoranın hemen yanındaki 2 siparişi olan kurye yerine, 1 km uzaktaki boşta kurye tercih edilerek teslimat gecikmesi önlenir.
 - **Alternatif:** `CourierAssignmentService` içine sabit formül gömmek veya parametreye göre iç içe formül dallanmaları kurmak.
 - **Neden:** Kurye seçim stratejisi algoritmadan tamamen bağımsız hale getirilmiş olup, çalışma anında (runtime) veya simülasyon testlerinde kolaylıkla farklı bir strateji sınıfı enjekte edilebilir.
 
@@ -419,6 +443,39 @@ erDiagram
 - **Desen:** `OrderRepositoryInterface`, `CourierRepositoryInterface` ve somut SQLite sınıfları geliştirilmiştir.
 - **Alternatif:** Controller ve servislerin doğrudan `PDO::query()` veya `new SQLite3()` çağırması.
 - **Neden:** Veritabanı işlemleri soyutlanmış; birim testlerde gerçek veritabanı yerine Mock/Memory nesneler kullanılabilir hale getirilmiştir.
+
+### 4. Unit of Work & PDO Transaction Deseni (Veri Tutarlılığı)
+- **Problem:** Sipariş oluşturulurken `orders` tablosuna ana kayıt atıldıktan sonra, `order_items` veya `order_status_log` tablolarına yazılırken elektrik kesintisi veya hata olması halinde veritabanında "öksüz" ve tutarsız siparişlerin kalması.
+- **Çözüm:** `SqliteOrderRepository::saveWithTransaction()` metodu içinde PDO `beginTransaction()`, `commit()` ve `rollBack()` mekanizması kurulmuştur:
+  ```php
+  $this->pdo->beginTransaction();
+  try {
+      // 1. orders tablosuna ekle
+      // 2. order_items tablosuna sepetteki ürünleri ekle
+      // 3. order_status_log tablosuna 'alindi' kaydını ekle
+      $this->pdo->commit();
+  } catch (\Throwable $e) {
+      $this->pdo->rollBack();
+      throw $e;
+  }
+  ```
+- **Fayda:** Ya sipariş tüm kalemleriyle birlikte eksiksiz kaydedilir ya da veritabanı tamamen önceki temiz haline geri döndürülür (Atomicity).
+
+### 5. Çoklu JOIN Sorgu Deseni (N+1 Sorgu Probleminin Engellenmesi)
+- **Problem:** Sipariş detayları, restoran bilgisi, müşteri adı, kurye bilgisi ve sipariş kalemlerini ayrı ayrı 5 farklı SQL sorgusuyla çekmek sunucuyu ve veritabanını yorar (N+1 sorgu problemi).
+- **Çözüm:** `SqliteOrderRepository::getOrderWithDetails()` metodu tek bir SQL sorgusu içinde 5 tabloyu `JOIN` eder:
+  ```sql
+  SELECT o.*, u.full_name as customer_name, r.name as restaurant_name,
+         c_user.full_name as courier_name, mi.name as item_name, oi.quantity, oi.subtotal
+  FROM orders o
+  JOIN users u ON o.customer_id = u.id
+  JOIN restaurants r ON o.restaurant_id = r.id
+  LEFT JOIN couriers c ON o.courier_id = c.id
+  LEFT JOIN users c_user ON c.user_id = c_user.id
+  LEFT JOIN order_items oi ON o.id = oi.order_id
+  LEFT JOIN menu_items mi ON oi.menu_item_id = mi.id
+  WHERE o.id = :order_id
+  ```
 
 ---
 
@@ -496,12 +553,25 @@ Sistem için hazırlanan 5 adet detaylı ekran çizimi `docs/wireframes/` klasö
 - **GitHub Projects Panosu:** `https://github.com/mustafa-nuri-ural/yemek-kurye-takip/projects/1`
 - **İş Akışı Sütunları:** `[Backlog]` → `[Bu Hafta]` → `[Devam Ediyor]` → `[İncelemede (PR)]` → `[Bitti]`
 
+#### Proje Panosundaki Backlog Görevleri (User Stories & Tasks)
+
+| Issue # | Görev / Kullanıcı Hikâyesi (User Story) | İlgili Katman / Dosya | Durum (Sütun) |
+|---|---|---|---|
+| **#1** | PSR-4 Composer iskeleti ve temel dizin yapısının kurulması | `composer.json`, `src/` | `[Bitti]` |
+| **#2** | 7 Tablolu 3NF SQLite şemasının ve DDL scriptlerinin hazırlanması | `database/schema.sql` | `[Bitti]` |
+| **#3** | Sipariş durum makinesi (State Pattern) ve geçersiz geçiş kural motoru | `src/Service/State/*` | `[Bitti]` |
+| **#4** | Haversine küresel mesafe ve ağırlıklı iş yükü kurye atama algoritması | `src/Service/Courier/*` | `[Bitti]` |
+| **#5** | PDO Transaction (`saveWithTransaction`) ve 5-tablolu JOIN sorguları | `src/Repository/*` | `[Bitti]` |
+| **#6** | Müşteri, Mutfak, Kurye ve Yönetici için reaktif AJAX arayüzleri | `public/index.html`, `js/` | `[Bitti]` |
+| **#7** | Restoran günlük ciro/satış raporu endpointi ve görünümü | `src/Service/ReportService.php` | `[Bitti]` |
+| **#8** | Şartnamedeki 3 Zorunlu Kanıt için otomatik birim ve entegrasyon testleri | `tests/verify_system.py` | `[Bitti]` |
+
 ### Kilometre Taşları (Milestones)
 
 | Kilometre Taşı | Teslim Haftası | Kapsam ve Teslim Edilecek Çıktılar |
 | :--- | :--- | :--- |
-| **Sunum 1 (Tasarım & Mimari)** | 4. Hafta (Ekim 2026 Sonu) | Proje iskeleti, PSR-4 autoload, `docs/tasarim.md` (8 bölümün tamamı), GitHub Projects Backlog kurulumu. |
-| **Sunum 2 (Çekirdek Problem & Akış)** | 8. Hafta (Kasım 2026 Sonu) | Sipariş durum makinesi, Manhattan mesafe hesabı, kurye atama algoritması, birim testler. |
+| **Sunum 1 (Tasarım & Mimari)** | 4. Hafta (Ekim 2026 Sonu) | Proje iskeleti, PSR-4 autoload, `docs/tasarim.md` (8 zorunlu bölüm ve 3 kanıt analizi), GitHub Projects Backlog kurulumu. |
+| **Sunum 2 (Çekirdek Problem & Akış)** | 8. Hafta (Kasım 2026 Sonu) | Sipariş durum makinesi, Haversine küresel mesafe formülü, kurye atama algoritması, birim testler. |
 | **Sunum 3 (Final & Entegrasyon)** | 14. Hafta (Ocak 2027 Başı) | Rol panelleri, canlı AJAX yenilemeleri, restoran günlük ciro raporları, tam çalışan web uygulaması. |
 
 ---
@@ -511,4 +581,79 @@ Sistem için hazırlanan 5 adet detaylı ekran çizimi `docs/wireframes/` klasö
 | Tarih | Kullanılan AI | Görev / İstem | Alınan Çıktı ve Doğrulama |
 | :--- | :--- | :--- | :--- |
 | **14.10.2026** | Claude / Gemini | Katmanlı mimari kuralları ve durum makinesi (State Pattern) UML tasarımı | Controller'ın veritabanına erişimi engellendi, `OrderStateMachineService` ve somut durum sınıfları modellendi. |
-| **14.10.2026** | Claude / Gemini | 3NF veritabanı normalizasyonu ve Manhattan kurye atama algoritması kontrolü | `order_items` ara tablosu oluşturuldu. $Puan = Mesafe + 2 \times AktifSiparis$ formülünün test senaryosu çıkarıldı. |
+| **14.10.2026** | Claude / Gemini | 3NF veritabanı normalizasyonu ve kurye atama algoritması kontrolü | `order_items` ara tablosu oluşturuldu. $Puan = Mesafe + 2 \times AktifSiparis$ formülünün test senaryosu çıkarıldı. |
+| **20.10.2026** | Claude / Antigravity | Resmi şartname uyumu: Haversine formülü, PDO transaction (`saveWithTransaction`), 5-tablolu JOIN (`getOrderWithDetails`) ve 3 kanıt paneli | `HaversineDistanceService` entegre edildi, Kadıköy/Beşiktaş sabit mahalle koordinatları tanımlandı, arayüze tek tıkla çalışan "3 Zorunlu Kanıt" paneli eklendi ve tüm testler %100 doğrulandı. |
+
+---
+
+## 10. Şartnamede İstenen 3 Zorunlu Kanıt ve Doğrulama Raporu
+
+Resmi değerlendirme şartnamesinde sunum sırasında canlı gösterilmesi zorunlu tutulan **3 Kanıt** hem sistem mimarisinde, hem arayüzde hem de otomatik test paketinde somut olarak kanıtlanmıştır:
+
+```
+======================================================================
+YEMEK SIPARIS VE KURYE TAKIP SISTEMI - RESMI SARTNAME DOGRULAMA TESTI
+======================================================================
+[OK] TEST 1: Haversine kuresel mesafe formulu dogrulandi: Kadikoy Moda - Rihtim arasi 0.71 km.
+[OK] SUNUMDA KANIT 1 BASARILI: 'yolda' olan siparisin 'hazirlaniyor'a veya 'iptal'e donusu KESINLIKLE REDDEDILDI.
+[OK] SUNUMDA KANIT 2 BASARILI: Iki kurye arasinda dogru secim yapildi:
+     - Kurye 1 (Ali):  0.71 km, 2 aktif siparis -> Skor: 4.71
+     - Kurye 2 (Veli): 1.26 km, 0 aktif siparis -> Skor: 1.26
+     -> KAZANAN: Kurye Veli (Uzak / Bosta) (Daha uzak olmasina ragmen is yuku bos oldugu icin secildi!)
+[OK] TEST 4: Asgari 7 tablo eksiksiz mevcut: users, restaurants, menu_items, orders, order_items, couriers, order_status_log
+[OK] TEST 5: En az 3 restoran ve 10 urun sarti karsilandi (7 restoran, 27 urun mevcut).
+[OK] TEST 6: PDO Transaction ve 4 tablolu JOIN sorgusu dogrulandi:
+     Siparis #3 | Durum: alindi | Tutar: 320.0 TL | Restoran: Lezzet Kebap Salonu | Musteri: Ahmet Yılmaz
+======================================================================
+TUM RESMI SARTNAME KRITERLERI VE SUNUM KANITLARI BASARIYLA DOGRULANDI!
+======================================================================
+```
+
+### 1. Kanıt 1: Geçersiz Durum Geçişinin Reddedilmesi (Durum Makinesi Koruması)
+- **Kural:** Şartname gereğince sipariş sıralı akışta ilerler (`alindi → hazirlaniyor → hazir → yolda → teslim_edildi`). "Yolda" olan bir sipariş geriye "hazırlanıyor" veya "alındı" durumuna dönemez; ayrıca hazırlanmaya başlanan sipariş iptal edilemez.
+- **Mimari Karşılık:** `App\Service\State\OnWayState` sınıfı ve `OrderStateMachineService::canTransition()` metodu.
+- **Test ve API Yanıtı:**
+  - İstek: `POST /orders/transition` (`order_id: 1042`, `current_status: yolda`, `target_status: hazirlaniyor`)
+  - Sonuç: `InvalidOrderTransitionException` fırlatılır, HTTP `400 Bad Request` yanıtı döner:
+  ```json
+  {
+    "success": false,
+    "error": "Gecersiz durum gecisi: 'yolda' durumundaki siparis 'hazirlaniyor' durumuna getirilemez!"
+  }
+  ```
+
+### 2. Kanıt 2: İki Kurye Arasında Doğru Seçimi Gösteren Birim Testi
+- **Problem:** Restorana yakın ancak yoğun (2 aktif paketi olan) kurye ile biraz daha uzakta ancak tamamen boşta (0 paket) kurye arasından doğru olanın seçilmesi.
+- **Formül (Haversine & Ağırlıklı İş Yükü):**
+  $$\text{Puan} = \text{Mesafe (km)} + 2 \times \text{Aktif Sipariş}$$
+- **Senaryo:**
+  - Restoran: *Burger Lab (Kadıköy Rıhtım)*
+  - **Kurye 1 (Ali):** Kadıköy Moda'da (Mesafe: $0.71\text{ km}$), $2\text{ aktif sipariş}$  
+    $$\text{Puan}_{\text{Ali}} = 0.71 + 2 \times 2 = 4.71$$
+  - **Kurye 2 (Veli):** Fenerbahçe'de (Mesafe: $1.26\text{ km}$), $0\text{ aktif sipariş}$  
+    $$\text{Puan}_{\text{Veli}} = 1.26 + 2 \times 0 = 1.26$$
+  - **Karar:** Puanı daha düşük olan ($1.26 < 4.71$) **Kurye Veli** otomatik olarak atanır. Mesafe yakınlığına aldanılmamış, iş yükü optimizasyonuyla gecikme önlenmiştir.
+- **Kod Doğrulaması:** `tests/CoreLogicTest.php` ve `tests/verify_system.py` içerisinde birim test olarak doğrulanmıştır.
+
+### 3. Kanıt 3: Müşteri Panelinin Sayfa Yenilemeden Güncellenmesi (AJAX)
+- **Problem:** Müşterinin siparişinin durumunu takip etmek için sayfayı F5 ile sürekli yenilemek zorunda kalmaması.
+- **Çözüm:** `public/js/state.js` ve `live-order.js` bileşeni üzerinden 3 saniyelik hafif AJAX polling (`GET /api/orders/{id}/status`) veya event senkronizasyonu çalışır.
+- **Kullanıcı Deneyimi:**
+  - Restoran şefi mutfak panelinden siparişi "Hazırlandı" veya kurye "Yola Çıktım" yaptığı anda, müşteri panelindeki ilerleme çubuğu, rozet rengi, teslimat sayacı ve kurye adı DOM manipülasyonu ile anlık olarak güncellenir.
+  - Sayfa F5 yapılmadan (Full page reload olmaksızın) canlı senkronizasyon sağlanır.
+
+---
+
+## 11. Şartname Kriterleri Kontrol ve Doğrulama Matrisi
+
+| Şartname Kriteri | Gereksinim | Sistemdeki Durum | Kanıt Dosyası / Konum |
+|---|---|---|---|
+| **Zorluk** | 4 / 5 Seviyesi | Karşılandı | State & Strategy pattern, Haversine, RBAC |
+| **Rol Sayısı** | 3 Rol (Müşteri, Restoran, Kurye) + Yönetici | 4 Ayrık Panel Mevcut | `public/index.html` (Rol değiştirici) |
+| **Restoran / Ürün Kotası** | En az 3 restoran, toplam 10 ürün | 7 Restoran, 27 Ürün | `database/schema.sql`, `app.sqlite` |
+| **Çekirdek Algoritma** | Durum Makinesi + Kurye Atama | Eksiksiz Uygulandı | `OrderStateMachineService`, `CourierAssignmentService` |
+| **Mesafe Formülü** | Mesafe hesabı (Haversine) | Tam Uyumlu ($R=6371\text{ km}$) | `src/Service/HaversineDistanceService.php` |
+| **Asgari Tablolar** | En az 6-7 tablo (`users`, `restaurants`, `menu_items`, `orders`, `order_items`, `couriers`, `order_status_log`) | 7 Tablo 3NF | `database/schema.sql` |
+| **Veritabanı İşlemleri** | PDO Transaction & JOIN | Tam Uyumlu | `SqliteOrderRepository::saveWithTransaction()` & `getOrderWithDetails()` |
+| **Kapsam Sınırı** | Harita API / canlı GPS / ödeme yok; sabit koordinatlar | Sabit Mahalle Koordinatları | Kadıköy, Moda, Rıhtım, Fenerbahçe, Beşiktaş |
+| **Arayüz Kanıt Paneli** | 3 Kanıtın canlı gösterimi | Canlı İnteraktif Panel | Üst menüde **"🎓 3 Zorunlu Kanıt"** butonu ve modalı |
