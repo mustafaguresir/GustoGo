@@ -5,13 +5,13 @@
 
 ---
 
-### 🎙️ 1. ÜYE: PROJE YÖNETİCİSİ (@mustafa-nuri-ural)
+### 🎙️ 1. ÜYE: PROJE YÖNETİCİSİ (Mustafa Güreşir - @mustafaguresir)
 * **Süre:** 1,5 Dakika (00:00 – 01:30)
 * **Sorumlu Olduğu Alanlar:** Proje Vizyonu, Çekirdek Problem, Kullanıcı Rolleri ve 3 Ana Kullanıcı Hikâyesi.
 
 #### 📢 Konuşma Metni:
 > *"Sayın Hocam ve değerli arkadaşlar, merhabalar.  
-> Ben Mustafa Nuri Ural, GustoGo projesinin proje yöneticisiyim.  
+> Ben Mustafa Güreşir, GustoGo projesinin proje yöneticisiyim.  
 > 
 > Bugün sizlere, katmanlı mimari ve modern tasarım desenleriyle geliştirdiğimiz **Yemek Sipariş ve Akıllı Kurye Takip Sistemi**mizi sunacağız.
 > 

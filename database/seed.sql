@@ -15,7 +15,7 @@ INSERT OR IGNORE INTO users (id, username, password_hash, full_name, phone, role
 (10, 'kurye_veli', 'hash123', 'Veli Demir (Kurye)', '05556667788', 'courier'),
 (11, 'kurye_can', 'hash123', 'Can Yıldız (Kurye)', '05556667799', 'courier'),
 (12, 'kurye_mehmet', 'hash123', 'Mehmet Arslan (Kurye)', '05556667700', 'courier'),
-(13, 'admin_yonetici', 'hash123', 'Mustafa Nuri (Yönetici)', '05557778899', 'admin');
+(13, 'admin_yonetici', 'hash123', 'Mustafa Güreşir (Yönetici)', '05557778899', 'admin');
 
 -- 2. Restoranlar (Izgara Koordinatları X, Y)
 INSERT OR REPLACE INTO restaurants (id, user_id, name, location_x, location_y, phone) VALUES

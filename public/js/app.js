@@ -1576,7 +1576,7 @@ function loginAs(role) {
         customer: { name: state.currentUser.fullName, role: `${state.userPoints} Puan` },
         restaurant: { name: vendorRest.name, role: "SATICI / RESTORAN" },
         courier: { name: courier.name, role: "KURYE" },
-        admin: { name: "Mustafa Nuri (Yönetici)", role: "SİSTEM YÖNETİCİSİ" }
+        admin: { name: "Mustafa Güreşir (Yönetici)", role: "SİSTEM YÖNETİCİSİ" }
     };
 
     const navName = document.getElementById('nav-name');

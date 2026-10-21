@@ -5,7 +5,7 @@
 **Proje Adı:** GustoGo (Food Delivery & Smart Courier Dispatch System)  
 **Doküman Sürümü:** 1.0.0 (Resmi Şartname Uyumu)  
 **Tarih:** 21 Ekim 2026  
-**Grup:** @mustafa-nuri-ural (Proje Yöneticisi), @mimar-uye (Yazılım Mimarı), @vt-test-uye (Veritabanı Sorumlusu), @ui-doc-uye (Arayüz Sorumlusu)
+**Grup:** Mustafa Güreşir (@mustafaguresir - Proje Yöneticisi), @mimar-uye (Yazılım Mimarı), @vt-test-uye (Veritabanı Sorumlusu), @ui-doc-uye (Arayüz Sorumlusu)
 
 ---
 

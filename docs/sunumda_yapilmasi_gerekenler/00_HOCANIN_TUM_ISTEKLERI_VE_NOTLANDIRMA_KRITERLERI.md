@@ -34,7 +34,7 @@ Dersin resmi şartname tablosu ve projedeki karşılıkları aşağıdadır:
 * **Toplam Sunum Süresi:** 7 Dakika (Kesinlikle aşılmamalıdır!)
 * **Soru - Cevap:** 3 - 5 Dakika
 * **Ekip Rol Dağılımı (4 Kişi):**
-  1. **Proje Yöneticisi (@mustafa-nuri-ural):** 1,5 Dakika
+  1. **Proje Yöneticisi (Mustafa Güreşir - @mustafaguresir):** 1,5 Dakika
   2. **Yazılım Mimarı:** 2,0 Dakika
   3. **Veritabanı ve Test Sorumlusu:** 2,0 Dakika
   4. **Arayüz ve Dokümantasyon Sorumlusu:** 1,5 Dakika

@@ -17,7 +17,7 @@
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
     <script>
         mermaid.initialize({
-            startOnLoad: true,
+            startOnLoad: false,
             theme: 'dark',
             themeVariables: {
                 darkMode: true,
@@ -776,18 +776,18 @@
         <div id="tab-speeches" class="tab-content">
             <div class="grid-2">
                 
-                <!-- 1. ÜYE: MUSTAFA NURİ URAL -->
+                <!-- 1. ÜYE: MUSTAFA GÜREŞİR -->
                 <div class="speaker-card">
                     <div class="speaker-header">
                         <div>
-                            <div class="speaker-name">1. Üye: Mustafa Nuri Ural</div>
+                            <div class="speaker-name">1. Üye: Mustafa Güreşir</div>
                             <div class="speaker-topics">Proje Yöneticisi • Vizyon, Problem, Roller & 3 Hikâye</div>
                         </div>
                         <div class="speaker-time">00:00 – 01:30 (1,5 Dk)</div>
                     </div>
                     <div class="speech-box">
                         <button class="copy-btn" onclick="copyText('speech-1')">Kopyala</button>
-                        <p id="speech-1">"Sayın Hocam ve değerli arkadaşlar, merhabalar. Ben Mustafa Nuri Ural, GustoGo projesinin proje yöneticisiyim.<br><br>
+                        <p id="speech-1">"Sayın Hocam ve değerli arkadaşlar, merhabalar. Ben Mustafa Güreşir, GustoGo projesinin proje yöneticisiyim.<br><br>
                         Bugün sizlere, katmanlı mimari ve modern tasarım desenleriyle geliştirdiğimiz <strong>Yemek Sipariş ve Akıllı Kurye Takip Sistemi</strong>mizi sunacağız.<br><br>
                         <strong>Vizyonumuz:</strong> Sipariş sürecindeki gecikmeleri, sipariş iptallerindeki restoran zararlarını ve kuryeler arasındaki adaletsiz iş yükünü matematiksel ve mimari kurallarla çözmektir.<br><br>
                         <strong>Çekirdek Problemimiz:</strong> Restoran siparişi hazırladığında; kuryenin mesafesi ile anlık iş yükünü harmanlayarak en optimum kuryeyi adil bir şekilde atamaktır. Şartname gereğince mesafeyi <strong>Haversine Formülü</strong> ile küresel koordinatlar üzerinden hesaplıyoruz. Kurye seçim kuralımız: <em>Puan = Haversine Mesafesi (km) + 2 × Aktif Sipariş İş Yükü</em>.<br><br>
@@ -1363,6 +1363,17 @@ stateDiagram-v2
 
     <script>
         // Tab switching
+        let diagramsRendered = false;
+        function renderDiagramsIfActive() {
+            const target = document.getElementById('tab-diagrams');
+            if (target && target.classList.contains('active') && !diagramsRendered && window.mermaid) {
+                diagramsRendered = true;
+                setTimeout(() => {
+                    mermaid.run({ querySelector: '#tab-diagrams .mermaid' });
+                }, 50);
+            }
+        }
+
         function switchTab(tabId, el = null) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -1372,11 +1383,13 @@ stateDiagram-v2
             const target = document.getElementById(tabId);
             if (target) {
                 target.classList.add('active');
-                if (tabId === 'tab-diagrams' && window.mermaid) {
-                    try { mermaid.run(); } catch(e) {}
-                }
+                renderDiagramsIfActive();
             }
         }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderDiagramsIfActive();
+        });
 
         // 3 Presentation Proof Live Demonstrations
         function runPresentationProof1() {

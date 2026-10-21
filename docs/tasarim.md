@@ -3,7 +3,7 @@
 **Ders:** PHP Programlama – Tasarım ve Mimari (Hafta 3 / 4)  
 **Proje Adı:** Yemek Sipariş ve Kurye Takip Sistemi (GustoGo - Food Delivery & Smart Courier Dispatch)  
 **Grup Sorumluları ve Sunum Görev Dağılımı:**
-- **Proje Yöneticisi:** @mustafa-nuri-ural (Sunum: Proje vizyonu, çekirdek problem, kullanıcı rolleri ve 3 ana hikâye - 1,5 dk)
+- **Proje Yöneticisi:** Mustafa Güreşir (@mustafaguresir) (Sunum: Proje vizyonu, çekirdek problem, kullanıcı rolleri ve 3 ana hikâye - 1,5 dk)
 - **Yazılım Mimarı:** @mimar-uye (Sunum: Katmanlı mimari, çekirdek sınıflar, State ve Strategy desenleri ve gerekçeleri - 2 dk)
 - **Veritabanı & Test Sorumlusu:** @vt-test-uye (Sunum: Kurye atama ve durum sıralama diyagramı, PDO transaction, JOIN, ER diyagramı ve 3 zorunlu kanıt - 2 dk)
 - **Arayüz & Dokümantasyon Sorumlusu:** @ui-doc-uye (Sunum: 5 adet ekran taslağı, sayfa haritası, risk matrisi ve GitHub backlog - 1,5 dk)
@@ -550,7 +550,7 @@ Sistem için hazırlanan 5 adet detaylı ekran çizimi `docs/wireframes/` klasö
 ## 8. Proje Planı, GitHub Projects ve Kilometre Taşları
 
 ### Backlog ve Proje Panosu
-- **GitHub Projects Panosu:** `https://github.com/mustafa-nuri-ural/yemek-kurye-takip/projects/1`
+- **GitHub Projects Panosu:** `https://github.com/mustafaguresir/GustoGo/projects/1`
 - **İş Akışı Sütunları:** `[Backlog]` → `[Bu Hafta]` → `[Devam Ediyor]` → `[İncelemede (PR)]` → `[Bitti]`
 
 #### Proje Panosundaki Backlog Görevleri (User Stories & Tasks)
