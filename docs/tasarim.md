@@ -2,11 +2,11 @@
 
 **Ders:** PHP Programlama – Tasarım ve Mimari (Hafta 3 / 4)  
 **Proje Adı:** Yemek Sipariş ve Kurye Takip Sistemi (GustoGo - Food Delivery & Smart Courier Dispatch)  
-**Grup Sorumluları ve Sunum Görev Dağılımı:**
-- **Proje Yöneticisi:** Mustafa Güreşir (@mustafaguresir) (Sunum: Proje vizyonu, çekirdek problem, kullanıcı rolleri ve 3 ana hikâye - 1,5 dk)
-- **Yazılım Mimarı:** @mimar-uye (Sunum: Katmanlı mimari, çekirdek sınıflar, State ve Strategy desenleri ve gerekçeleri - 2 dk)
-- **Veritabanı & Test Sorumlusu:** @vt-test-uye (Sunum: Kurye atama ve durum sıralama diyagramı, PDO transaction, JOIN, ER diyagramı ve 3 zorunlu kanıt - 2 dk)
-- **Arayüz & Dokümantasyon Sorumlusu:** @ui-doc-uye (Sunum: 5 adet ekran taslağı, sayfa haritası, risk matrisi ve GitHub backlog - 1,5 dk)
+**Grup Üyeleri ve Görev Dağılımı:**
+- **Proje Yöneticisi:** Mustafa Güreşir (@mustafaguresir) (Proje vizyonu, çekirdek problem tanımı, 4 kullanıcı rolü ve 3 ana kullanıcı hikâyesi)
+- **Yazılım Mimarı:** @mimar-uye (Katmanlı mimari şeması, katman kuralları, çekirdek sınıflar, State ve Strategy desenleri ve mimari gerekçeleri)
+- **Veritabanı & Test Sorumlusu:** @vt-test-uye (Sipariş ve kurye atama sıralama diyagramı, PDO transaction, JOIN sorguları, ER diyagramı ve 3 zorunlu doğrulama kanıtı)
+- **Arayüz & Dokümantasyon Sorumlusu:** @ui-doc-uye (5 adet ekran taslağı, sayfa haritası, risk matrisi, GitHub backlog ve dokümantasyon)
 
 ---
 
@@ -23,7 +23,7 @@ Dersin resmi şartname tablosunda tanımlanan zorunlu kriterler ve projemizdeki 
 | **PHP özellikleri** | State deseni, PHP 8.1 enum (sipariş durumu), mesafe hesabı (Haversine), AJAX, PDO ve transaction, JOIN, rol bazlı yetkilendirme. | - State Deseni: `OrderStateInterface` ve 6 durum sınıfı<br>- PHP 8.1 Enum: `OrderStatus`, `CourierStatus`<br>- Mesafe: `HaversineDistanceService`<br>- AJAX Endpoint: `public/api.php`<br>- PDO Transaction: `saveWithTransaction()`<br>- Çoklu JOIN: `getOrderWithDetails()` (5 tablo JOIN)<br>- RBAC: `OrderController::changeStatus()` |
 | **Asgari tablolar** | `users`, `restaurants`, `menu_items`, `orders`, `order_items`, `couriers`, `order_status_log` (en az 6 tablo) | 7 Tablolu 3NF SQLite Şeması (`database/schema.sql` ve `database/app.sqlite`) |
 | **Kapsam sınırı** | Harita servisi, canlı konum takibi ve ödeme yok; konumlar sabit koordinat veya mahalle olarak tutulur. | Kadıköy Moda, Kadıköy Rıhtım, Fenerbahçe, Beşiktaş vb. sabit mahalle koordinatları ve 2D şematik ızgara. |
-| **Sunumda kanıt** | 1. Geçersiz durum geçişinin reddi;<br>2. İki kurye arasında doğru seçimi gösteren birim testi;<br>3. Müşteri panelinin sayfa yenilemeden güncellenmesi. | Arayüzde tek tıkla çalışan **"🎓 3 Zorunlu Kanıt"** test paneli ve konsol testleri (`tests/verify_system.py`) |
+| **Doğrulama ve Kanıt** | 1. Geçersiz durum geçişinin reddi;<br>2. İki kurye arasında doğru seçimi gösteren birim testi;<br>3. Müşteri panelinin sayfa yenilemeden güncellenmesi. | Arayüzde tek tıkla çalışan **"🎓 3 Zorunlu Kanıt"** test paneli ve konsol testleri (`tests/verify_system.py`) |
 
 ---
 
@@ -588,7 +588,7 @@ Sistem için hazırlanan 5 adet detaylı ekran çizimi `docs/wireframes/` klasö
 
 ## 10. Şartnamede İstenen 3 Zorunlu Kanıt ve Doğrulama Raporu
 
-Resmi değerlendirme şartnamesinde sunum sırasında canlı gösterilmesi zorunlu tutulan **3 Kanıt** hem sistem mimarisinde, hem arayüzde hem de otomatik test paketinde somut olarak kanıtlanmıştır:
+Resmi değerlendirme şartnamesinde doğrulanması zorunlu tutulan **3 Çekirdek Kanıt** hem sistem mimarisinde, hem arayüzde hem de otomatik test paketinde somut olarak kanıtlanmıştır:
 
 ```
 ======================================================================

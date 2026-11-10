@@ -1,13 +1,13 @@
 # GustoGo — Yemek Sipariş ve Kurye Takip Sistemi
-## Hocanın Tüm İstekleri, Notlandırma Kriterleri ve Değerlendirme Rehberi
+## Hocanın Tüm İstekleri, Notlandırma Kriterleri ve Proje Şartnamesi
 
-Bu belge, **PHP Programlama – Tasarım ve Mimari (Hafta 3 / 4)** dersi kapsamında dersin öğretim üyesinin (hocanın) projeden ve sunumdan **birebir istediği tüm maddeleri**, **değerlendirme kriterlerini** ve **not kırma noktalarını** eksiksiz olarak içermektedir.
+Bu belge, **PHP Programlama – Tasarım ve Mimari (Hafta 3 / 4)** dersi kapsamında dersin öğretim üyesinin (hocanın) projeden **birebir istediği tüm maddeleri**, **teknik mimari şartları** ve **değerlendirme kriterlerini** eksiksiz olarak içermektedir.
 
 ---
 
 ### 🎯 1. Hocanın Ana Beklentisi ve Dersin Amacı
 
-Hoca bu aşamada çalışan tam bir frontend/backend yazılımından ziyade **doğru bir yazılım mimarisi kurgulanmasını**, **katmanların birbirinden izole edilmesini**, **tasarım desenlerinin doğru yerde kullanılmasını** ve **bu mimarinin sunumda 7 dakika içinde akademik/teknik bir dille savunulabilmesini** istemektedir.
+Hoca bu aşamada çalışan tam bir frontend/backend yazılımından ziyade **doğru bir yazılım mimarisi kurgulanmasını**, **katmanların birbirinden izole edilmesini**, **tasarım desenlerinin doğru yerde kullanılmasını** ve **nesne yönelimli prensiplere (SOLID) uygun bir mimari kurulmasını** istemektedir.
 
 > **Hocanın Temel Felsefesi:**  
 > *"Kod yazmak kolaydır; önemli olan değişime dirençli, katmanları birbirine karışmayan, test edilebilir ve nesne yönelimli prensiplere (SOLID) uygun bir mimari kurmaktır."*
@@ -27,24 +27,22 @@ Dersin resmi şartname tablosu ve projedeki karşılıkları aşağıdadır:
 | **PHP özellikleri** | State deseni, PHP 8.1 enum (sipariş durumu), mesafe hesabı (Haversine), AJAX, PDO ve transaction, JOIN, rol bazlı yetkilendirme. | - State Deseni (`App\Service\State`)<br>- Enum: `App\Enum\OrderStatus`<br>- Haversine: `App\Service\HaversineDistanceService`<br>- AJAX: `public/api.php`<br>- PDO & Transaction: `saveWithTransaction()`<br>- SQL JOIN: `getOrderWithDetails()`, `getCustomerOrdersWithJoin()`<br>- RBAC: `OrderController::changeStatus()` |
 | **Asgari tablolar** | `users`, `restaurants`, `menu_items`, `orders`, `order_items`, `couriers`, `order_status_log` (en az 6 tablo) | 7 Tablolu ilişkisel şema (`database/schema.sql` ve `database/app.sqlite`) |
 | **Kapsam sınırı** | Harita servisi, canlı konum takibi ve ödeme yok; konumlar sabit koordinat veya mahalle olarak tutulur. | Dış harita API veya ödeme gateway'i yoktur; Kadıköy, Beşiktaş vb. sabit mahalle koordinatları ve 2D şematik ızgara kullanılır. |
-| **Sunumda kanıt** | 1. Geçersiz durum geçişinin reddi;<br>2. İki kurye arasında doğru seçimi gösteren birim testi;<br>3. Müşteri panelinin sayfa yenilemeden güncellenmesi. | Sunumda ve arayüzde tek tıkla çalıştırılan **3 Canlı Kanıt Merkezi** (`tests/CoreLogicTest.php`, `tests/verify_system.py`, UI Modal) |
+| **Doğrulama ve Kanıt** | 1. Geçersiz durum geçişinin reddi;<br>2. İki kurye arasında doğru seçimi gösteren birim testi;<br>3. Müşteri panelinin sayfa yenilemeden güncellenmesi. | Sistemde ve birim testlerde çalışan **3 Çekirdek Kanıt** (`tests/CoreLogicTest.php`, `tests/verify_system.py`, UI Modal) |
 
 ---
 
-* **Toplam Sunum Süresi:** 7 Dakika (Kesinlikle aşılmamalıdır!)
-* **Soru - Cevap:** 3 - 5 Dakika
-* **Ekip Rol Dağılımı (4 Kişi):**
-  1. **Proje Yöneticisi (Mustafa Güreşir - @mustafaguresir):** 1,5 Dakika
-  2. **Yazılım Mimarı:** 2,0 Dakika
-  3. **Veritabanı ve Test Sorumlusu:** 2,0 Dakika
-  4. **Arayüz ve Dokümantasyon Sorumlusu:** 1,5 Dakika
-* **Kural:** Her grup üyesi kendi alanını anlatmalı, kimse diğerinin alanına müdahale etmemeli veya suskun kalmamalıdır.
+### 👥 2. Ekip Rol Dağılımı ve Görev Sorumlulukları (4 Kişi)
+
+1. **Proje Yöneticisi (Mustafa Güreşir - @mustafaguresir):** Proje vizyonu, çekirdek problem tanımı, 4 kullanıcı rolü ve 3 ana kullanıcı hikâyesi.
+2. **Yazılım Mimarı:** Katmanlı mimari şeması, katman kuralları (Separation of Concerns), sınıf diyagramı (12+ sınıf), State ve Strategy desenleri ve alternatif analizleri.
+3. **Veritabanı ve Test Sorumlusu:** Çekirdek akış sıralama diyagramı (Sequence) ve 2 hata dalı, 7 tablonun ER diyagramı ve 3NF normalizasyon analizi, PDO ve transaction yönetimi, 3 çekirdek doğrulama testi.
+4. **Arayüz ve Dokümantasyon Sorumlusu:** 5 ekran arayüz taslağı (wireframes), sayfa haritası akışı, 6 maddelik risk matrisi, GitHub Projects backlog yönetimi ve yapay zekâ kullanım günlüğü.
 
 ---
 
 ### 📑 3. Hocanın İstediği 8 Zorunlu Bölüm (Tasarım Belgesi Kapsamı)
 
-Hoca aşağıdaki 8 bölümün tasarım dokümanında ve sunumda eksiksiz yer almasını şart koşmaktadır:
+Hoca aşağıdaki 8 bölümün tasarım dokümanında (`docs/tasarim.md`) eksiksiz yer almasını şart koşmaktadır:
 
 #### Bölüm 1: Proje Vizyonu, Çekirdek Problem ve Kullanıcı Hikâyeleri
 * **Proje Vizyonu:** Ne yapıyoruz? (Akıllı kurye dağıtımlı, durum makineli yemek sipariş platformu).
@@ -93,9 +91,9 @@ Hoca aşağıdaki 8 bölümün tasarım dokümanında ve sunumda eksiksiz yer al
 * **3NF:** Geçişli bağımlılık yok (`orders` tablosunda kuryenin veya müşterinin adı, telefonu tutulmaz; sadece `courier_id` ve `customer_id` tutulur. Kurye konumu değiştiğinde sipariş tablosu bozulmaz).
 
 #### Bölüm 6: Tasarım Desenleri (Design Patterns) ve Alternatifleri
-Hoca desenlerin neden seçildiğini ve alternatiflerinin neden elendiğini mutlaka sorar:
+Tasarım desenlerinin seçilme gerekçeleri ve elenen alternatiflerin mimari analizi:
 1. **State Pattern (Durum Deseni):**
-   * *Neden:* Sipariş adımları (`alındı → hazırlanıyor → hazır → yolda → teslim edildi`) ve iptal kuralını (`hazırlanıyor`dan sonra iptal yasaktır) nesne düzeyinde kapsüllemek.
+   * *Neden:* Sipariş adımları (`alındı → hazırlanıyor → hazır → yolda → teslim edildi`) ve iptal kuralını (`hazırlanıyor`dan sonra iptal yasaktır) nesne düzeyinde kapsüllemek (Encapsulation).
    * *Alternatifi Neden Elendi:* Controller veya Serviste iç içe onlarca `switch-case` ve `if-else` yazmak kodu kırılgan ve spagetti yapar; yeni durum eklendiğinde mevcut kodları bozar (Open/Closed Principle ihlali).
 2. **Strategy Pattern (Strateji Deseni):**
    * *Neden:* Kurye seçim formülünü ($Mesafe + 2 \times Aktif$) çalışma anında (runtime) veya simülasyonda bağımsız değiştirebilmek.
@@ -119,10 +117,10 @@ Hoca desenlerin neden seçildiğini ve alternatiflerinin neden elendiğini mutla
 
 ---
 
-### ⚠️ 4. Hocanın En Çok Not Kırdığı Noktalar (Dikkat Edilmesi Gerekenler)
+### ⚠️ 4. Hocanın En Çok Not Kırdığı Noktalar (Teknik Mimari Hataları)
 
 1. **Katman Atlama:** Controller'ın doğrudan Repository veya Model veritabanı metodunu çağırması. (Kesinlikle Service katmanı üzerinden geçmelidir).
-2. **Süre Aşımı:** 7 dakikayı geçen grupların sözünün kesilmesi ve puan kırılması.
-3. **"Neden Bu Deseni Seçtiniz?" Sorusuna Cevap Verememek:** "Daha havalı olduğu için" demek yerine "Open/Closed prensibi gereği, if-else bloklarını bertaraf etmek ve her durumun geçiş kurallarını kendi sınıfında kapsüllemek için" denmelidir.
-4. **Veritabanında 3NF İhlali:** Sipariş tablosunda kurye adı veya restoran adresi saklamak.
-5. **Diyagramlarda Hata Dalı Unutulması:** Sequence diyagramında yalnızca mutlu yolun (happy path) çizilip "hata olduğunda ne olur?" dallarının çizilmemesi.
+2. **Katman İhlali (SQL Sızıntısı):** Controller veya Service katmanı içerisine SQL sorgusu yazılması. (SQL yalnızca Repository katmanında soyutlanmalıdır).
+3. **Tasarım Deseni Mantığı:** Desen seçiminde nesne yönelimli tasarım prensiplerinin (Open/Closed, Single Responsibility vb.) dikkate alınmaması.
+4. **Veritabanında 3NF İhlali:** Sipariş tablosunda kurye adı veya restoran adresi saklamak gibi geçişli bağımlılıkların bulunması.
+5. **Diyagramlarda Hata Dalı Unutulması:** Sequence diyagramında yalnızca mutlu yolun (happy path) çizilip "hata olduğunda ne olur?" dallarının (alt/else) çizilmemesi.
