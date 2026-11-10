@@ -1,0 +1,80 @@
+[
+  {
+    "id": 1,
+    "customer_id": 1,
+    "restaurant_id": 1,
+    "courier_id": 2,
+    "status": "alindi",
+    "total_amount": 390.0,
+    "delivery_latitude": 40.986,
+    "delivery_longitude": 29.029,
+    "estimated_delivery_time": "30 dk",
+    "created_at": "2026-10-21 14:00:00",
+    "items": [
+      {
+        "id": 1,
+        "order_id": 1,
+        "menu_item_id": 1,
+        "name": "Adana Kebap Dürüm",
+        "quantity": 2,
+        "unit_price": 195.0,
+        "subtotal": 390.0
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "customer_id": 2,
+    "restaurant_id": 2,
+    "courier_id": null,
+    "status": "hazirlaniyor",
+    "total_amount": 315.0,
+    "delivery_latitude": 40.989,
+    "delivery_longitude": 29.027,
+    "estimated_delivery_time": "25 dk",
+    "created_at": "2026-10-21 14:15:00",
+    "items": [
+      {
+        "id": 2,
+        "order_id": 2,
+        "menu_item_id": 5,
+        "name": "Gusto Smash Burger",
+        "quantity": 1,
+        "unit_price": 240.0,
+        "subtotal": 240.0
+      },
+      {
+        "id": 3,
+        "order_id": 2,
+        "menu_item_id": 7,
+        "name": "Baharatlı Patates Kızartması",
+        "quantity": 1,
+        "unit_price": 75.0,
+        "subtotal": 75.0
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "customer_id": 1,
+    "restaurant_id": 3,
+    "courier_id": 1,
+    "status": "yolda",
+    "total_amount": 295.0,
+    "delivery_latitude": 40.985,
+    "delivery_longitude": 29.028,
+    "estimated_delivery_time": "10 dk",
+    "created_at": "2026-10-21 13:45:00",
+    "items": [
+      {
+        "id": 4,
+        "order_id": 3,
+        "menu_item_id": 10,
+        "name": "Quattro Formaggi",
+        "quantity": 1,
+        "unit_price": 295.0,
+        "subtotal": 295.0
+      }
+    ]
+  }
+]

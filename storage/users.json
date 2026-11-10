@@ -1,0 +1,92 @@
+[
+  {
+    "id": 1,
+    "username": "ahmet_musteri",
+    "password_hash": "$2y$10$e8wU.U0Yg4O7uS3QZ9vC/.Kz2x7j.1mQ6xP8a3b5c7d9e1f3g5h7i",
+    "full_name": "Ahmet Yılmaz (Müşteri)",
+    "phone": "05551112233",
+    "role": "customer",
+    "created_at": "2026-10-20 10:00:00"
+  },
+  {
+    "id": 2,
+    "username": "ayse_musteri",
+    "password_hash": "$2y$10$e8wU.U0Yg4O7uS3QZ9vC/.Kz2x7j.1mQ6xP8a3b5c7d9e1f3g5h7i",
+    "full_name": "Ayşe Kaya (Müşteri)",
+    "phone": "05552223344",
+    "role": "customer",
+    "created_at": "2026-10-20 10:05:00"
+  },
+  {
+    "id": 3,
+    "username": "mehmet_musteri",
+    "password_hash": "$2y$10$e8wU.U0Yg4O7uS3QZ9vC/.Kz2x7j.1mQ6xP8a3b5c7d9e1f3g5h7i",
+    "full_name": "Mehmet Çelik (Müşteri)",
+    "phone": "05553334455",
+    "role": "customer",
+    "created_at": "2026-10-20 10:10:00"
+  },
+  {
+    "id": 4,
+    "username": "restoran_lezzet",
+    "password_hash": "$2y$10$e8wU.U0Yg4O7uS3QZ9vC/.Kz2x7j.1mQ6xP8a3b5c7d9e1f3g5h7i",
+    "full_name": "Lezzet Kebap Yetkilisi",
+    "phone": "02163334455",
+    "role": "restaurant",
+    "created_at": "2026-10-20 09:00:00"
+  },
+  {
+    "id": 5,
+    "username": "restoran_burger",
+    "password_hash": "$2y$10$e8wU.U0Yg4O7uS3QZ9vC/.Kz2x7j.1mQ6xP8a3b5c7d9e1f3g5h7i",
+    "full_name": "Gusto Burger Şefi",
+    "phone": "02164445566",
+    "role": "restaurant",
+    "created_at": "2026-10-20 09:10:00"
+  },
+  {
+    "id": 6,
+    "username": "restoran_pizza",
+    "password_hash": "$2y$10$e8wU.U0Yg4O7uS3QZ9vC/.Kz2x7j.1mQ6xP8a3b5c7d9e1f3g5h7i",
+    "full_name": "Bella Pizza Yetkilisi",
+    "phone": "02165556677",
+    "role": "restaurant",
+    "created_at": "2026-10-20 09:20:00"
+  },
+  {
+    "id": 7,
+    "username": "kurye_ali",
+    "password_hash": "$2y$10$e8wU.U0Yg4O7uS3QZ9vC/.Kz2x7j.1mQ6xP8a3b5c7d9e1f3g5h7i",
+    "full_name": "Ali Kurye (Kadıköy Rıhtım)",
+    "phone": "05554445566",
+    "role": "courier",
+    "created_at": "2026-10-20 08:30:00"
+  },
+  {
+    "id": 8,
+    "username": "kurye_veli",
+    "password_hash": "$2y$10$e8wU.U0Yg4O7uS3QZ9vC/.Kz2x7j.1mQ6xP8a3b5c7d9e1f3g5h7i",
+    "full_name": "Veli Kurye (Fenerbahçe)",
+    "phone": "05555556677",
+    "role": "courier",
+    "created_at": "2026-10-20 08:35:00"
+  },
+  {
+    "id": 9,
+    "username": "kurye_can",
+    "password_hash": "$2y$10$e8wU.U0Yg4O7uS3QZ9vC/.Kz2x7j.1mQ6xP8a3b5c7d9e1f3g5h7i",
+    "full_name": "Can Kurye (Moda)",
+    "phone": "05556667788",
+    "role": "courier",
+    "created_at": "2026-10-20 08:40:00"
+  },
+  {
+    "id": 10,
+    "username": "admin_mustafa",
+    "password_hash": "$2y$10$e8wU.U0Yg4O7uS3QZ9vC/.Kz2x7j.1mQ6xP8a3b5c7d9e1f3g5h7i",
+    "full_name": "Mustafa Güreşir (Yönetici)",
+    "phone": "05557778899",
+    "role": "admin",
+    "created_at": "2026-10-20 08:00:00"
+  }
+]

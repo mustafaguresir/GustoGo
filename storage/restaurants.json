@@ -1,0 +1,86 @@
+[
+  {
+    "id": 1,
+    "user_id": 4,
+    "name": "Moda Lezzet Kebap",
+    "location_x": 10,
+    "location_y": 15,
+    "latitude": 40.985,
+    "longitude": 29.028,
+    "neighborhood": "Kadıköy Moda",
+    "phone": "02163334455",
+    "is_active": true
+  },
+  {
+    "id": 2,
+    "user_id": 5,
+    "name": "Gusto Burger & Fries",
+    "location_x": 12,
+    "location_y": 14,
+    "latitude": 40.988,
+    "longitude": 29.0295,
+    "neighborhood": "Bahariye",
+    "phone": "02164445566",
+    "is_active": true
+  },
+  {
+    "id": 3,
+    "user_id": 6,
+    "name": "Bella Napoli Pizza",
+    "location_x": 15,
+    "location_y": 20,
+    "latitude": 40.991,
+    "longitude": 29.025,
+    "neighborhood": "Kadıköy Rıhtım",
+    "phone": "02165556677",
+    "is_active": true
+  },
+  {
+    "id": 4,
+    "user_id": 4,
+    "name": "Saray Dürüm Evi",
+    "location_x": 8,
+    "location_y": 12,
+    "latitude": 40.982,
+    "longitude": 29.031,
+    "neighborhood": "Moda Sahil",
+    "phone": "02163338899",
+    "is_active": true
+  },
+  {
+    "id": 5,
+    "user_id": 5,
+    "name": "Yeşil Vadi Ev Yemekleri",
+    "location_x": 14,
+    "location_y": 18,
+    "latitude": 40.9895,
+    "longitude": 29.027,
+    "neighborhood": "Caferağa",
+    "phone": "02164449900",
+    "is_active": true
+  },
+  {
+    "id": 6,
+    "user_id": 6,
+    "name": "Wok & Sushi Express",
+    "location_x": 18,
+    "location_y": 22,
+    "latitude": 40.993,
+    "longitude": 29.022,
+    "neighborhood": "Hasanpaşa",
+    "phone": "02165551122",
+    "is_active": true
+  },
+  {
+    "id": 7,
+    "user_id": 4,
+    "name": "Tatlı Kaşığı Patisserie",
+    "location_x": 11,
+    "location_y": 16,
+    "latitude": 40.9865,
+    "longitude": 29.03,
+    "neighborhood": "Moda Caddesi",
+    "phone": "02163332211",
+    "is_active": true
+  }
+]

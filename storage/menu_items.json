@@ -1,0 +1,110 @@
+[
+  {
+    "id": 1,
+    "restaurant_id": 1,
+    "name": "Adana Kebap Dürüm",
+    "description": "Zırh kıyması, közlenmiş biber ve domates",
+    "price": 195.0,
+    "category": "Kebap",
+    "is_available": true
+  },
+  {
+    "id": 2,
+    "restaurant_id": 1,
+    "name": "Urfa Kebap Porsiyon",
+    "description": "Acısız zırh kıyması, bulgur pilavı ve sumaklı soğan",
+    "price": 260.0,
+    "category": "Kebap",
+    "is_available": true
+  },
+  {
+    "id": 3,
+    "restaurant_id": 1,
+    "name": "Künefe",
+    "description": "Hatay peynirli, tereyağlı çıtır künefe",
+    "price": 130.0,
+    "category": "Tatlı",
+    "is_available": true
+  },
+  {
+    "id": 4,
+    "restaurant_id": 1,
+    "name": "Yayık Ayranı",
+    "description": "Köpüklü taze yayık ayranı 300ml",
+    "price": 35.0,
+    "category": "İçecek",
+    "is_available": true
+  },
+  {
+    "id": 5,
+    "restaurant_id": 2,
+    "name": "Gusto Smash Burger",
+    "description": "140g dana döş köfte, cheddar, karamelize soğan",
+    "price": 240.0,
+    "category": "Burger",
+    "is_available": true
+  },
+  {
+    "id": 6,
+    "restaurant_id": 2,
+    "name": "Truffle Mayo Burger",
+    "description": "Trüf mayonez, mantar, cheddar, füme et",
+    "price": 275.0,
+    "category": "Burger",
+    "is_available": true
+  },
+  {
+    "id": 7,
+    "restaurant_id": 2,
+    "name": "Baharatlı Patates Kızartması",
+    "description": "Cajun baharatlı çıtır parmak patates",
+    "price": 75.0,
+    "category": "Yan Ürün",
+    "is_available": true
+  },
+  {
+    "id": 8,
+    "restaurant_id": 2,
+    "name": "Kutu Kola",
+    "description": "330ml kutu",
+    "price": 45.0,
+    "category": "İçecek",
+    "is_available": true
+  },
+  {
+    "id": 9,
+    "restaurant_id": 3,
+    "name": "Pizza Margherita",
+    "description": "San Marzano domates sosu, manda mozzarella, taze fesleğen",
+    "price": 250.0,
+    "category": "Pizza",
+    "is_available": true
+  },
+  {
+    "id": 10,
+    "restaurant_id": 3,
+    "name": "Quattro Formaggi",
+    "description": "Mozzarella, gorgonzola, parmesan, ricotta",
+    "price": 295.0,
+    "category": "Pizza",
+    "is_available": true
+  },
+  {
+    "id": 11,
+    "restaurant_id": 3,
+    "name": "Pepperoni Passion",
+    "description": "İtalyan dana pepperoni, bol mozzarella",
+    "price": 310.0,
+    "category": "Pizza",
+    "is_available": true
+  },
+  {
+    "id": 12,
+    "restaurant_id": 3,
+    "name": "Tiramisu Klasik",
+    "description": "Mascarpone ve espresso ile taze hazırlanmış",
+    "price": 140.0,
+    "category": "Tatlı",
+    "is_available": true
+  }
+]

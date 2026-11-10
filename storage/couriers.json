@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "user_id": 7,
+    "name": "Ali Kurye (Kadıköy Rıhtım)",
+    "current_x": 15,
+    "current_y": 20,
+    "latitude": 40.991,
+    "longitude": 29.025,
+    "neighborhood": "Kadıköy Rıhtım",
+    "active_orders_count": 2,
+    "status": "musait"
+  },
+  {
+    "id": 2,
+    "user_id": 8,
+    "name": "Veli Kurye (Fenerbahçe)",
+    "current_x": 8,
+    "current_y": 10,
+    "latitude": 40.976,
+    "longitude": 29.038,
+    "neighborhood": "Fenerbahçe",
+    "active_orders_count": 0,
+    "status": "musait"
+  },
+  {
+    "id": 3,
+    "user_id": 9,
+    "name": "Can Kurye (Moda)",
+    "current_x": 10,
+    "current_y": 15,
+    "latitude": 40.985,
+    "longitude": 29.028,
+    "neighborhood": "Moda Caddesi",
+    "active_orders_count": 1,
+    "status": "musait"
+  },
+  {
+    "id": 4,
+    "user_id": 7,
+    "name": "Mehmet Kurye (Göztepe)",
+    "current_x": 20,
+    "current_y": 25,
+    "latitude": 40.982,
+    "longitude": 29.055,
+    "neighborhood": "Göztepe Parkı",
+    "active_orders_count": 0,
+    "status": "mesgul"
+  }
+]
